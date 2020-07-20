@@ -547,7 +547,8 @@ withinRangeObj ref productsnew (  )</title></path>
 * oid
 id</title></a>
 <text x='1648' y='520' text-anchor='end' class='colType'>oid</text>  <use id='nn' x='1522' y='525' xlink:href='#nn'/><a xlink:href='#insurv_test.answers_author'><text id='insurv_test.answers.author' x='1539' y='535' onmouseover="hghl(['answers_Ref','insurv_test.users._id'])" onmouseout="uhghl(['answers_Ref','insurv_test.users._id'])">author</text><title>author
-* oid</title></a>
+* oid
+作者id</title></a>
 <text x='1648' y='536' text-anchor='end' class='colType'>oid</text><a xlink:href='#insurv_test.answers.author'><use id='fk' x='1652' y='524' xlink:href='#fk'/><title>References users ( author -&gt; _id ) </title></a>
   <use id='nn' x='1522' y='541' xlink:href='#nn'/><a xlink:href='#insurv_test.answers_question'><text id='insurv_test.answers.question' x='1539' y='551' onmouseover="hghl(['answers_Ref','insurv_test.questions._id'])" onmouseout="uhghl(['answers_Ref','insurv_test.questions._id'])">question</text><title>question
 * oid
@@ -585,7 +586,8 @@ id</title></a>
 <rect class='entity' style='stroke:#8F5E1E' x='1520' y='1048' width='160' height='224' rx='8' ry='8' />
 <path d='M 1520 1076 L 1520 1056 Q 1520 1048 1528 1048 L 1672 1048 Q 1680 1048 1680 1056 L 1680 1076 L1520 1076 ' style='fill:url(#tbg_F4DDBE);stroke:1;stroke-opacity:0.1;' />
 <rect class='entity' x='1520' y='1048' width='160' height='224' rx='8' ry='8' style='fill:none;stroke:#E1DDDA'/>
-<a xlink:href='#insurv_test.branch'><text x='1575' y='1067' >branch</text><title>Collection insurv_test.branch</title></a>
+<a xlink:href='#insurv_test.branch'><text x='1575' y='1067' >branch</text><title>Collection insurv_test.branch
+分销机构</title></a>
   <use id='nn' x='1522' y='1085' xlink:href='#nn'/><use id='pk' x='1522' y='1084' xlink:href='#pk'><title>Pk _id_ ( _id ) </title></use><a xlink:href='#insurv_test.branch__id'><text id='insurv_test.branch._id' x='1539' y='1095'>_id</text><title>_id
 * oid
 id</title></a>
@@ -892,7 +894,8 @@ array
 string
 评论内容</title></a>
 <text x='1200' y='696' text-anchor='end' class='colType'>string</text>  <a xlink:href='#formdata_cc'><text id='formdata.cc' x='1091' y='711'>cc</text><title>cc
-integer</title></a>
+integer
+理赔便捷</title></a>
 <text x='1200' y='712' text-anchor='end' class='colType'>integer</text>  <a xlink:href='#formdata_claim'><text id='formdata.claim' x='1091' y='727'>claim</text><title>claim
 integer
 是否理赔 0 否 1 是</title></a>
@@ -931,7 +934,8 @@ string
 <rect class='entity' style='stroke:#451E8F' x='1216' y='1160' width='128' height='160' rx='8' ry='8' />
 <path d='M 1216 1188 L 1216 1168 Q 1216 1160 1224 1160 L 1336 1160 Q 1344 1160 1344 1168 L 1344 1188 L1216 1188 ' style='fill:url(#tbg_D1BEF4);stroke:1;stroke-opacity:0.1;' />
 <rect class='entity' x='1216' y='1160' width='128' height='160' rx='8' ry='8' style='fill:none;stroke:#DCDAE1'/>
-<a xlink:href='#insurv_test.guides'><text x='1256' y='1179' >guides</text><title>Collection insurv_test.guides</title></a>
+<a xlink:href='#insurv_test.guides'><text x='1256' y='1179' >guides</text><title>Collection insurv_test.guides
+新手指南</title></a>
   <use id='nn' x='1218' y='1197' xlink:href='#nn'/><use id='pk' x='1218' y='1196' xlink:href='#pk'><title>Pk _id_ ( _id ) </title></use><a xlink:href='#insurv_test.guides__id'><text id='insurv_test.guides._id' x='1235' y='1207' onmouseover="hghl(['guides_Ref','insurv_test.guides.parent'])" onmouseout="uhghl(['guides_Ref','insurv_test.guides.parent'])">_id</text><title>_id
 * oid
 id</title></a>
@@ -942,19 +946,19 @@ id</title></a>
 <text x='1328' y='1224' text-anchor='end' class='colType'>string</text><a xlink:href='#insurv_test.guides.parent'><use id='fk' x='1332' y='1212' xlink:href='#fk'/><title>References guides ( parent -&gt; _id ) </title></a>
   <use id='nn' x='1218' y='1229' xlink:href='#nn'/><a xlink:href='#insurv_test.guides_name'><text id='insurv_test.guides.name' x='1235' y='1239'>name</text><title>name
 * string
-名称</title></a>
+其父标题</title></a>
 <text x='1328' y='1240' text-anchor='end' class='colType'>string</text>  <use id='nn' x='1218' y='1245' xlink:href='#nn'/><a xlink:href='#insurv_test.guides_explain'><text id='insurv_test.guides.explain' x='1235' y='1255'>explain</text><title>explain
 * string
-说明</title></a>
+其父标题说明</title></a>
 <text x='1328' y='1256' text-anchor='end' class='colType'>string</text>  <use id='nn' x='1218' y='1261' xlink:href='#nn'/><a xlink:href='#insurv_test.guides_index'><text id='insurv_test.guides.index' x='1235' y='1271'>index</text><title>index
 * integer
 父类排序序号</title></a>
 <text x='1328' y='1272' text-anchor='end' class='colType'>integer</text>  <use id='nn' x='1218' y='1277' xlink:href='#nn'/><a xlink:href='#insurv_test.guides_label'><text id='insurv_test.guides.label' x='1235' y='1287'>label</text><title>label
 * string
-标签</title></a>
+子标题题目</title></a>
 <text x='1328' y='1288' text-anchor='end' class='colType'>string</text>  <use id='nn' x='1218' y='1293' xlink:href='#nn'/><a xlink:href='#insurv_test.guides_content'><text id='insurv_test.guides.content' x='1235' y='1303'>content</text><title>content
 * string
-内容，相关解释</title></a>
+子标题的相关解释</title></a>
 <text x='1328' y='1304' text-anchor='end' class='colType'>string</text>
 <!-- == Table 'hotsetting' == -->
 <rect class='entity' style='stroke:#1E498F' x='544' y='1704' width='128' height='96' rx='8' ry='8' />
@@ -1151,12 +1155,13 @@ integer
 <rect class='entity' style='stroke:#451E8F' x='864' y='1560' width='128' height='128' rx='8' ry='8' />
 <path d='M 864 1588 L 864 1568 Q 864 1560 872 1560 L 984 1560 Q 992 1560 992 1568 L 992 1588 L864 1588 ' style='fill:url(#tbg_D1BEF4);stroke:1;stroke-opacity:0.1;' />
 <rect class='entity' x='864' y='1560' width='128' height='128' rx='8' ry='8' style='fill:none;stroke:#DCDAE1'/>
-<a xlink:href='#insurv_test.search'><text x='905' y='1579' >search</text><title>Collection insurv_test.search</title></a>
+<a xlink:href='#insurv_test.search'><text x='905' y='1579' >search</text><title>Collection insurv_test.search
+搜索历史记录</title></a>
   <use id='nn' x='866' y='1597' xlink:href='#nn'/><use id='pk' x='866' y='1596' xlink:href='#pk'><title>Pk _id_ ( _id ) </title></use><a xlink:href='#insurv_test.search__id'><text id='insurv_test.search._id' x='883' y='1607'>_id</text><title>_id
 * oid</title></a>
 <text x='976' y='1608' text-anchor='end' class='colType'>oid</text>  <use id='nn' x='866' y='1613' xlink:href='#nn'/><a xlink:href='#insurv_test.search__owner'><text id='insurv_test.search._owner' x='883' y='1623' onmouseover="hghl(['search_Ref','insurv_test.users._id'])" onmouseout="uhghl(['search_Ref','insurv_test.users._id'])">_owner</text><title>_owner
 * oid
-问题的创建者ID</title></a>
+用户id</title></a>
 <text x='976' y='1624' text-anchor='end' class='colType'>oid</text><a xlink:href='#insurv_test.search._owner'><use id='fk' x='980' y='1612' xlink:href='#fk'/><title>References users ( _owner -&gt; _id ) </title></a>
   <use id='nn' x='866' y='1629' xlink:href='#nn'/><a xlink:href='#insurv_test.search_muid'><text id='insurv_test.search.muid' x='883' y='1639'>muid</text><title>muid
 * string</title></a>
@@ -1329,7 +1334,7 @@ string
 		<td>*<svg width='14' height='14'><use xlink:href='#fk'/></svg></td>
 		<td><a name='insurv_test.answers_author'>author</a></td>
 		<td> oid  </td>
-		<td>  </td>
+		<td> 作者id </td>
 	</tr>
 	<tr>
 		<td>*<svg width='14' height='14'><use xlink:href='#fk'/></svg></td>
@@ -1412,6 +1417,7 @@ string
 
 <br><br>
 <div class='card'><div class='card-body'><a name='insurv_test.branch' onclick='window.scrollTo(1320, 1056);return false;' style='cursor:pointer;'><h5 class='card-title'>Collection branch</h5></a>
+<p class="text-muted">分销机构</p>
 <table class='table table-sm table-bordered small' style='table-layout: fixed; word-wrap: break-word;'>
 <thead>
 <tr><th style='width:5%'>Idx</th><th style='width:20%'>Field Name</th><th style='width:23%'>Data Type</th><th style='width:52%'>Description</th></tr>
@@ -1789,7 +1795,7 @@ string
 		<td>&nbsp;</td>
 		<td><a name='insurv_test.comments_formdata.cc'>formdata&#46;cc</a></td>
 		<td> integer  </td>
-		<td>  </td>
+		<td> 理赔便捷 </td>
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
@@ -2195,6 +2201,7 @@ string
 
 <br><br>
 <div class='card'><div class='card-body'><a name='insurv_test.guides' onclick='window.scrollTo(1016, 1168);return false;' style='cursor:pointer;'><h5 class='card-title'>Collection guides</h5></a>
+<p class="text-muted">新手指南</p>
 <table class='table table-sm table-bordered small' style='table-layout: fixed; word-wrap: break-word;'>
 <thead>
 <tr><th style='width:5%'>Idx</th><th style='width:20%'>Field Name</th><th style='width:23%'>Data Type</th><th style='width:52%'>Description</th></tr>
@@ -2216,13 +2223,13 @@ string
 		<td>*</td>
 		<td><a name='insurv_test.guides_name'>name</a></td>
 		<td> string  </td>
-		<td> 名称 </td>
+		<td> 其父标题 </td>
 	</tr>
 	<tr>
 		<td>*</td>
 		<td><a name='insurv_test.guides_explain'>explain</a></td>
 		<td> string  </td>
-		<td> 说明 </td>
+		<td> 其父标题说明 </td>
 	</tr>
 	<tr>
 		<td>*</td>
@@ -2234,13 +2241,13 @@ string
 		<td>*</td>
 		<td><a name='insurv_test.guides_label'>label</a></td>
 		<td> string  </td>
-		<td> 标签 </td>
+		<td> 子标题题目 </td>
 	</tr>
 	<tr>
 		<td>*</td>
 		<td><a name='insurv_test.guides_content'>content</a></td>
 		<td> string  </td>
-		<td> 内容，相关解释 </td>
+		<td> 子标题的相关解释 </td>
 	</tr>
 <tr><th colspan='4'>Indexes</th></tr>
 	<tr>		<td><svg width='14' height='14'><use xlink:href='#pk'/></svg></td><td>&#95;id&#95;</td>
@@ -2644,6 +2651,7 @@ string
 
 <br><br>
 <div class='card'><div class='card-body'><a name='insurv_test.search' onclick='window.scrollTo(664, 1568);return false;' style='cursor:pointer;'><h5 class='card-title'>Collection search</h5></a>
+<p class="text-muted">搜索历史记录</p>
 <table class='table table-sm table-bordered small' style='table-layout: fixed; word-wrap: break-word;'>
 <thead>
 <tr><th style='width:5%'>Idx</th><th style='width:20%'>Field Name</th><th style='width:23%'>Data Type</th><th style='width:52%'>Description</th></tr>
@@ -2659,7 +2667,7 @@ string
 		<td>*<svg width='14' height='14'><use xlink:href='#fk'/></svg></td>
 		<td><a name='insurv_test.search__owner'>&#95;owner</a></td>
 		<td> oid  </td>
-		<td> 问题的创建者ID </td>
+		<td> 用户id </td>
 	</tr>
 	<tr>
 		<td>*</td>
