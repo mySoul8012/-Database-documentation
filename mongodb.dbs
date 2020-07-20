@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="MongoDb" id="Project_1d9" database="MongoDb" >
+	<schema name="insurv_test" >
+		<table name="adminUsers" />
+		<table name="answer-likes" />
+		<table name="answers" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="author" type="oid" length="800" decimal="0" jt="-8" mandatory="y" />
+			<column name="question" type="oid" length="800" decimal="0" jt="-8" mandatory="y" />
+			<column name="formid" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="content" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" />
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" />
+			<column name="deleted" type="integer" length="800" decimal="0" jt="4" mandatory="y" />
+			<column name="reason" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="hidden" type="integer" length="800" decimal="0" jt="4" mandatory="y" />
+			<column name="nrOfLikes" type="integer" length="800" decimal="0" jt="4" mandatory="y" />
+			<column name="pictures" type="array" length="800" decimal="0" jt="4999545" mandatory="y" />
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="questions" >
+				<fk_column name="question" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="users" >
+				<fk_column name="author" pk="_id" />
+			</fk>
+		</table>
+		<table name="branch" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="_column" type="oid" length="800" decimal="0" jt="-8" mandatory="y" />
+			<column name="infoId" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="columnId" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="columnName" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="region" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="telephone" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="address" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" />
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" />
+			<column name="company" type="oid" length="800" decimal="0" jt="-8" mandatory="y" />
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="companies" >
+				<fk_column name="_column" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="companies" >
+				<fk_column name="company" pk="_id" />
+			</fk>
+		</table>
+		<table name="brokers" >
+			<comment><![CDATA[保险经纪人文档]]></comment>
+			<column name="_id" type="oid" jt="-8" mandatory="y" >
+				<comment><![CDATA[id]]></comment>
+			</column>
+			<column name="_owner" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[用户id]]></comment>
+			</column>
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[创建时间]]></comment>
+			</column>
+			<column name="credential" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[经纪人资格证书号码]]></comment>
+			</column>
+			<column name="idcard" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[经纪人身份证号]]></comment>
+			</column>
+			<column name="license" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[经纪人执业证编号]]></comment>
+			</column>
+			<column name="name" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[经纪人姓名]]></comment>
+			</column>
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[更新时间]]></comment>
+			</column>
+			<column name="verified" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+				<comment><![CDATA[验证状态标识 0 验证中 1 验证成功 2 验证失败]]></comment>
+			</column>
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="users" >
+				<fk_column name="_owner" pk="_id" />
+			</fk>
+		</table>
+		<table name="comment-likes" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="_owner" type="oid" length="800" decimal="0" jt="-8" mandatory="y" />
+			<column name="comment" type="oid" length="800" decimal="0" jt="-8" mandatory="y" />
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" />
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" />
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="comments" >
+				<fk_column name="comment" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="users" >
+				<fk_column name="_owner" pk="_id" />
+			</fk>
+		</table>
+		<table name="comments" >
+			<column name="_id" type="oid" jt="-8" mandatory="y" >
+				<comment><![CDATA[id]]></comment>
+			</column>
+			<column name="company" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[保险公司id]]></comment>
+			</column>
+			<column name="product" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[保险产品id]]></comment>
+			</column>
+			<column name="author" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[作者id]]></comment>
+			</column>
+			<column name="oe" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+				<comment><![CDATA[整体评价 Overall product evaluation]]></comment>
+			</column>
+			<column name="content" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[点评内容]]></comment>
+			</column>
+			<column name="formid" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[程序返回formId，用于向用户发送信息的一串字符串]]></comment>
+			</column>
+			<column name="formdata" type="object" jt="4999544" mandatory="y" >
+				<comment><![CDATA[提交的表单数据]]></comment>
+				<column name="pt" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[价格透明评分]]></comment>
+				</column>
+				<column name="be" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[购买体验评分]]></comment>
+				</column>
+				<column name="cs" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[客服服务评分]]></comment>
+				</column>
+				<column name="oce" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[公司整体评价 评分]]></comment>
+				</column>
+				<column name="ic" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+					<comment><![CDATA[保障全面评分]]></comment>
+				</column>
+				<column name="pc" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[产品条款，条款是否清晰评分]]></comment>
+				</column>
+				<column name="pp" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[产品价格评分]]></comment>
+				</column>
+				<column name="ope" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[产品整体评价评分]]></comment>
+				</column>
+				<column name="renewal" type="object" jt="4999544" >
+					<comment><![CDATA[续保当前产品]]></comment>
+					<column name="feedback" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+					<column name="done" type="integer" length="800" decimal="0" jt="4" mandatory="y" />
+				</column>
+				<column name="recommend" type="object" jt="4999544" >
+					<comment><![CDATA[给他人推荐当前产品]]></comment>
+					<column name="feedback" type="string" length="800" decimal="0" jt="12" />
+					<column name="done" type="integer" length="800" decimal="0" jt="4" />
+				</column>
+				<column name="pictures" type="array" length="800" decimal="0" jt="4999545" />
+				<column name="content" type="string" length="800" decimal="0" jt="12" />
+				<column name="cc" type="integer" length="800" decimal="0" jt="4" />
+				<column name="claim" type="integer" length="800" decimal="0" jt="4" />
+				<column name="channel" type="integer" length="800" decimal="0" jt="4" />
+				<column name="idcard" type="string" length="800" decimal="0" jt="12" />
+				<column name="name" type="string" length="800" decimal="0" jt="12" />
+				<column name="vas" type="integer" length="800" decimal="0" jt="4" />
+				<column name="rs" type="integer" length="800" decimal="0" jt="4" />
+				<column name="cp" type="integer" length="800" decimal="0" jt="4" />
+				<column name="ia" type="integer" length="800" decimal="0" jt="4" />
+				<column name="ip" type="integer" length="800" decimal="0" jt="4" />
+				<column name="oe" type="integer" length="800" decimal="0" jt="4" />
+				<column name="title" type="string" length="800" decimal="0" jt="12" />
+			</column>
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" >
+				<comment><![CDATA[更新时间]]></comment>
+			</column>
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" >
+				<comment><![CDATA[创建时间]]></comment>
+			</column>
+			<column name="deleted" type="integer" length="800" decimal="0" jt="4" >
+				<comment><![CDATA[删除状态 0 保留 1 删除]]></comment>
+			</column>
+			<column name="reason" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[对该评论隐藏的原因和理由]]></comment>
+			</column>
+			<column name="hidden" type="integer" length="800" decimal="0" jt="4" >
+				<comment><![CDATA[隐藏状态	 0 显示 1 隐藏]]></comment>
+			</column>
+			<column name="commentype" type="integer" length="800" decimal="0" jt="4" >
+				<comment><![CDATA[点评类型 0 非经纪人 1 经纪人]]></comment>
+			</column>
+			<column name="nrOfLikes" type="integer" length="800" decimal="0" jt="4" >
+				<comment><![CDATA[点赞数量]]></comment>
+			</column>
+			<column name="highlights" type="array" length="800" decimal="0" jt="4999545" >
+				<comment><![CDATA[需要高亮的字段]]></comment>
+			</column>
+			<column name="pictures" type="array" length="800" decimal="0" jt="4999545" >
+				<comment><![CDATA[点评图片]]></comment>
+			</column>
+			<column name="title" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[点评标题]]></comment>
+			</column>
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="companies" >
+				<fk_column name="company" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="productsnew" >
+				<fk_column name="product" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="users" >
+				<fk_column name="author" pk="_id" />
+			</fk>
+		</table>
+		<table name="companies" >
+			<comment><![CDATA[公司表]]></comment>
+			<column name="_id" type="oid" jt="-8" mandatory="y" >
+				<comment><![CDATA[文档id]]></comment>
+			</column>
+			<column name="pictureUrl" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[公司logo]]></comment>
+			</column>
+			<column name="fullName" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[公司全名]]></comment>
+			</column>
+			<column name="shortName" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[公司简称]]></comment>
+			</column>
+			<column name="type" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[公司类型]]></comment>
+			</column>
+			<column name="management" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[运营能力评级]]></comment>
+			</column>
+			<column name="solvency" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[偿付能力评级]]></comment>
+			</column>
+			<column name="srvrating" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[服务评级]]></comment>
+			</column>
+			<column name="websiteName" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[网站名称]]></comment>
+			</column>
+			<column name="websiteUrl" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[网站url]]></comment>
+			</column>
+			<column name="application" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[app名称]]></comment>
+			</column>
+			<column name="officialAccount" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[微信公众号名称]]></comment>
+			</column>
+			<column name="informationUrl" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[公司信息披露网址]]></comment>
+			</column>
+			<column name="telephone" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[电话]]></comment>
+			</column>
+			<column name="nrOfComments" type="double" length="800" decimal="0" jt="8" mandatory="y" >
+				<comment><![CDATA[评论条数]]></comment>
+			</column>
+			<column name="overallScore" type="double" length="800" decimal="0" jt="8" mandatory="y" >
+				<comment><![CDATA[总评分]]></comment>
+			</column>
+			<column name="hidden" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+				<comment><![CDATA[是否隐藏该产品]]></comment>
+			</column>
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[创建时间]]></comment>
+			</column>
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[更新时间]]></comment>
+			</column>
+			<column name="vValue" type="double" length="800" decimal="0" jt="8" mandatory="y" >
+				<comment><![CDATA[V值]]></comment>
+			</column>
+			<column name="vValues" type="object" jt="4999544" >
+				<comment><![CDATA[V值的详细]]></comment>
+				<column name="recommend" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[给他人推荐当前产品的指数，满值为100%]]></comment>
+				</column>
+				<column name="renewal" type="integer" length="800" decimal="0" jt="4" >
+					<comment><![CDATA[续保当前产品的指数，满值为100%]]></comment>
+				</column>
+				<column name="cc" type="string" length="800" decimal="0" jt="12" >
+					<comment><![CDATA[理赔便捷指数]]></comment>
+				</column>
+				<column name="be" type="string" length="800" decimal="0" jt="12" >
+					<comment><![CDATA[购买体验评级]]></comment>
+				</column>
+				<column name="pt" type="string" length="800" decimal="0" jt="12" >
+					<comment><![CDATA[价格透明指数]]></comment>
+				</column>
+				<column name="cs" type="string" length="800" decimal="0" jt="12" >
+					<comment><![CDATA[客户服务指数]]></comment>
+				</column>
+			</column>
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+		</table>
+		<table name="favorites" >
+			<comment><![CDATA[用户收藏表]]></comment>
+			<column name="_id" type="oid" jt="-8" mandatory="y" >
+				<comment><![CDATA[id]]></comment>
+			</column>
+			<column name="_owner" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[用户id]]></comment>
+			</column>
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[更新时间]]></comment>
+			</column>
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[创建时间]]></comment>
+			</column>
+			<column name="tag" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+				<comment><![CDATA[收藏标签 0 公司 1 产品]]></comment>
+			</column>
+			<column name="product" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[产品id]]></comment>
+			</column>
+			<column name="company" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[公司id]]></comment>
+			</column>
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="companies" >
+				<fk_column name="company" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="productsnew" >
+				<fk_column name="product" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="users" >
+				<fk_column name="_owner" pk="_id" />
+			</fk>
+		</table>
+		<table name="guides" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="parent" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="name" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="explain" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="index" type="integer" length="800" decimal="0" jt="4" mandatory="y" />
+			<column name="label" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="content" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="guides" >
+				<fk_column name="parent" pk="_id" />
+			</fk>
+		</table>
+		<table name="hotsetting" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="key" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="value" type="boolean" length="800" decimal="0" jt="16" mandatory="y" />
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+		</table>
+		<table name="product_category_new" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="name" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="sort" type="integer" length="800" decimal="0" jt="4" mandatory="y" />
+			<column name="children" type="array" length="800" decimal="0" jt="4999545" />
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+		</table>
+		<table name="productsnew" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="age" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="companyName" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="healthNotice" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="insuranceRequirements" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="observationPeriod" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="outOfRange" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="paymentDeadline" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="premium" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="productName" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="selling" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="termInsurance" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="withinRangeObj" type="object" length="800" decimal="0" jt="4999544" mandatory="y" >
+				<column name="withinRangeItemList" type="array" length="800" decimal="0" jt="4999545" mandatory="y" />
+			</column>
+			<column name="type" type="string" length="800" decimal="0" jt="12" />
+			<column name="company" type="oid" length="800" decimal="0" jt="-8" />
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" />
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" />
+			<column name="deleted" type="integer" length="800" decimal="0" jt="4" />
+			<column name="vValue" type="integer" length="800" decimal="0" jt="4" />
+			<column name="overallScore" type="integer" length="800" decimal="0" jt="4" />
+			<column name="nrOfComments" type="integer" length="800" decimal="0" jt="4" />
+			<column name="productTypeList" type="array" length="800" decimal="0" jt="4999545" />
+			<column name="vValues" type="object" length="800" decimal="0" jt="4999544" >
+				<column name="recommend" type="integer" length="800" decimal="0" jt="4" />
+				<column name="renewal" type="integer" length="800" decimal="0" jt="4" />
+				<column name="cc" type="string" length="800" decimal="0" jt="12" />
+				<column name="be" type="string" length="800" decimal="0" jt="12" />
+				<column name="pc" type="string" length="800" decimal="0" jt="12" />
+				<column name="pp" type="string" length="800" decimal="0" jt="12" />
+			</column>
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="companies" >
+				<fk_column name="company" pk="_id" />
+			</fk>
+		</table>
+		<table name="questions" >
+			<comment><![CDATA[提问文档]]></comment>
+			<column name="_id" type="oid" jt="-8" mandatory="y" >
+				<comment><![CDATA[文档索引id]]></comment>
+			</column>
+			<column name="company" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[文档所属公司]]></comment>
+			</column>
+			<column name="product" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[所属产品]]></comment>
+			</column>
+			<column name="author" type="oid" length="800" decimal="0" jt="-8" mandatory="y" >
+				<comment><![CDATA[作者]]></comment>
+			</column>
+			<column name="formid" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[formId 用于给用户发送模板消息。]]></comment>
+			</column>
+			<column name="content" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[问题描述]]></comment>
+			</column>
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[更新时间]]></comment>
+			</column>
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[创建时间]]></comment>
+			</column>
+			<column name="deleted" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+				<comment><![CDATA[删除状态  0 保留 1 删除]]></comment>
+			</column>
+			<column name="reason" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[删除的原因]]></comment>
+			</column>
+			<column name="hidden" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+				<comment><![CDATA[隐藏状态	 0 显示 1 隐藏]]></comment>
+			</column>
+			<column name="nrOfAnswers" type="integer" length="800" decimal="0" jt="4" mandatory="y" >
+				<comment><![CDATA[问题回答数量]]></comment>
+			</column>
+			<column name="pictures" type="array" length="800" decimal="0" jt="4999545" mandatory="y" >
+				<comment><![CDATA[上传的图片]]></comment>
+			</column>
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="companies" >
+				<fk_column name="company" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="productsnew" >
+				<fk_column name="product" pk="_id" />
+			</fk>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="users" >
+				<fk_column name="author" pk="_id" />
+			</fk>
+		</table>
+		<table name="search" >
+			<column name="_id" type="oid" length="800" decimal="0" jt="-8" mandatory="y" autoincrement="y" />
+			<column name="_owner" type="oid" length="800" decimal="0" jt="-8" mandatory="y" />
+			<column name="muid" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="keyword" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" />
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+			<fk name="Ref" virtual="y" to_schema="insurv_test" to_table="users" >
+				<fk_column name="_owner" pk="_id" />
+			</fk>
+		</table>
+		<table name="users" >
+			<comment><![CDATA[用户表]]></comment>
+			<column name="_id" type="oid" jt="-8" mandatory="y" >
+				<comment><![CDATA[主键id]]></comment>
+			</column>
+			<column name="openid" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[微信openId]]></comment>
+			</column>
+			<column name="expireTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[账号到期时间]]></comment>
+			</column>
+			<column name="sessionKey" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[会话key]]></comment>
+			</column>
+			<column name="unionid" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[更新时间]]></comment>
+			</column>
+			<column name="wxCode" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[微信小程序登录code]]></comment>
+			</column>
+			<column name="createTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
+				<comment><![CDATA[创建时间]]></comment>
+			</column>
+			<column name="token" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[给微信小程序前端返回token]]></comment>
+			</column>
+			<column name="avatarUrl" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[头像网址]]></comment>
+			</column>
+			<column name="city" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[所在城市]]></comment>
+			</column>
+			<column name="country" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[所属国家]]></comment>
+			</column>
+			<column name="gender" type="integer" length="800" decimal="0" jt="4" >
+				<comment><![CDATA[性别]]></comment>
+			</column>
+			<column name="language" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[所属语言]]></comment>
+			</column>
+			<column name="nickName" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[昵称]]></comment>
+			</column>
+			<column name="province" type="string" length="800" decimal="0" jt="12" >
+				<comment><![CDATA[所属省份]]></comment>
+			</column>
+			<index name="_id_" unique="PRIMARY_KEY" >
+				<column name="_id" />
+			</index>
+		</table>
+	</schema>
+	<connector name="MongoDb" database="MongoDb" driver_class="com.dbschema.MongoJdbcDriver" driver_jar="mongojdbc2.1.jar" driver_desc="Password Authentication" host="182.92.125.68" port="27017" instance="insurv_test" user="insurv" passwd="aW5zdXJ2MjAxOQ==" />
+	<layout name="Sample Layout with Tools" id="Layout_1a9a" show_column_type="y" show_relation="columns" >
+		<comment><![CDATA[MongoDb]]></comment>
+		<entity schema="insurv_test" name="adminUsers" color="BED3F4" x="352" y="1568" />
+		<entity schema="insurv_test" name="answer-likes" color="BED3F4" x="544" y="1568" />
+		<entity schema="insurv_test" name="answers" color="BED3F4" x="1520" y="480" />
+		<entity schema="insurv_test" name="branch" color="F4DDBE" x="1520" y="1056" />
+		<entity schema="insurv_test" name="brokers" color="C7F4BE" x="1520" y="144" />
+		<entity schema="insurv_test" name="comment-likes" color="BEBEF4" x="864" y="1056" />
+		<entity schema="insurv_test" name="comments" color="F4DDBE" x="864" y="528" />
+		<entity schema="insurv_test" name="companies" color="BED3F4" x="336" y="480" />
+		<entity schema="insurv_test" name="favorites" color="C7F4BE" x="864" y="176" />
+		<entity schema="insurv_test" name="comments" column="formdata" color="F4DDBE" x="1072" y="480" />
+		<entity schema="insurv_test" name="guides" color="D1BEF4" x="1264" y="1056" />
+		<entity schema="insurv_test" name="hotsetting" color="BED3F4" x="544" y="1712" />
+		<entity schema="insurv_test" name="product_category_new" color="BED3F4" x="288" y="1712" />
+		<entity schema="insurv_test" name="productsnew" color="C7F4BE" x="288" y="1008" />
+		<entity schema="insurv_test" name="questions" color="F4DDBE" x="48" y="80" />
+		<entity schema="insurv_test" name="comments" column="formdata.recommend" color="F4DDBE" x="1264" y="608" />
+		<entity schema="insurv_test" name="comments" column="formdata.renewal" color="F4DDBE" x="1264" y="704" />
+		<entity schema="insurv_test" name="search" color="D1BEF4" x="864" y="1568" />
+		<entity schema="insurv_test" name="users" color="BEBEF4" x="64" y="560" />
+		<entity schema="insurv_test" name="productsnew" column="vValues" color="C7F4BE" x="544" y="1184" />
+		<entity schema="insurv_test" name="companies" column="vValues" color="BED3F4" x="576" y="592" />
+		<entity schema="insurv_test" name="productsnew" column="withinRangeObj" color="C7F4BE" x="544" y="1104" />
+		<group name="adminUsers" color="ECF0F7" >
+			<entity schema="insurv_test" name="adminUsers" />
+			<entity schema="insurv_test" name="answer-likes" />
+			<entity schema="insurv_test" name="hotsetting" />
+			<entity schema="insurv_test" name="product_category_new" />
+		</group>
+		<group name="brokers" color="EEF7EC" >
+			<comment><![CDATA[保险经纪人表]]></comment>
+			<entity schema="insurv_test" name="brokers" />
+		</group>
+		<group name="search" color="F0ECF7" >
+			<entity schema="insurv_test" name="search" />
+		</group>
+		<group name="answers" color="ECF0F7" >
+			<entity schema="insurv_test" name="answers" />
+		</group>
+		<group name="branch" color="F7F2EC" >
+			<entity schema="insurv_test" name="branch" />
+		</group>
+		<group name="comment-likes" color="ECECF7" >
+			<entity schema="insurv_test" name="comment-likes" />
+		</group>
+		<group name="guides" color="F0ECF7" >
+			<entity schema="insurv_test" name="guides" />
+		</group>
+		<group name="favorites" color="EEF7EC" >
+			<comment><![CDATA[用户收藏表]]></comment>
+			<entity schema="insurv_test" name="favorites" />
+		</group>
+		<group name="questions" color="F7F2EC" >
+			<entity schema="insurv_test" name="questions" />
+		</group>
+		<group name="users" color="ECECF7" >
+			<entity schema="insurv_test" name="users" />
+		</group>
+		<group name="withinRangeObj" color="EEF7EC" >
+			<entity schema="insurv_test" name="productsnew" column="withinRangeObj" />
+			<entity schema="insurv_test" name="productsnew" />
+			<entity schema="insurv_test" name="productsnew" column="vValues" />
+		</group>
+		<group name="companies" color="ECF0F7" >
+			<comment><![CDATA[公司文档]]></comment>
+			<entity schema="insurv_test" name="companies" />
+			<entity schema="insurv_test" name="companies" column="vValues" />
+		</group>
+		<group name="comments" color="F7F2EC" >
+			<entity schema="insurv_test" name="comments" column="formdata.recommend" />
+			<entity schema="insurv_test" name="comments" column="formdata" />
+			<entity schema="insurv_test" name="comments" column="formdata.renewal" />
+			<entity schema="insurv_test" name="comments" />
+		</group>
+		<script name="Sample Query Editor" id="Editor_5d8" language="SQL" >
+			<string><![CDATA[// PLACE THE CARET OVER EACH LINE AND PRESS EXECUTE ( F8 )
+
+insurv_test.companies.find()
+
+//OR
+
+USE insurv_test;
+db.companies.find()
+
+//OR
+
+USE insurv_test;
+db.getCollection('companies').find()]]></string>
+		</script>
+		<browser id="Browse_1830" name="Sample Relational Data Browse" confirm_updates="y" >
+			<browse_table schema="insurv_test" entity="companies" x="20" y="20" width="400" height="300" record_view="y" >
+				<browse_table schema="insurv_test" entity="branch" fk="Ref" x="440" y="20" width="500" height="350" record_view="y" />
+			</browse_table>
+		</browser>
+		<query id="Query_3f9" name="Sample Query Builder" >
+			<query_table schema="insurv_test" name="companies" alias="companies" x="48" y="48" >
+				<column name="_id" />
+				<column name="pictureUrl" />
+				<column name="fullName" />
+				<column name="shortName" />
+				<column name="type" />
+				<column name="management" />
+				<column name="solvency" />
+				<column name="srvrating" />
+				<column name="websiteName" />
+				<column name="websiteUrl" />
+				<column name="application" />
+				<column name="officialAccount" />
+				<column name="informationUrl" />
+				<column name="telephone" />
+				<column name="nrOfComments" />
+				<column name="overallScore" />
+				<column name="hidden" />
+				<column name="createTime" />
+				<column name="updateTime" />
+				<column name="vValue" />
+				<column name="vValues" />
+				<query_table schema="insurv_test" name="branch" alias="branch" x="272" y="48" fk="Ref" type="Inner Join" >
+					<column name="_id" />
+					<column name="_column" />
+					<column name="infoId" />
+					<column name="columnId" />
+					<column name="columnName" />
+					<column name="region" />
+					<column name="telephone" />
+					<column name="address" />
+					<column name="createTime" />
+					<column name="updateTime" />
+					<column name="company" />
+				</query_table>
+			</query_table>
+		</query>
+	</layout>
+</project>
