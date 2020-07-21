@@ -679,7 +679,9 @@
 			<column name="sessionKey" type="string" length="800" decimal="0" jt="12" mandatory="y" >
 				<comment><![CDATA[会话key]]></comment>
 			</column>
-			<column name="unionid" type="string" length="800" decimal="0" jt="12" mandatory="y" />
+			<column name="unionid" type="string" length="800" decimal="0" jt="12" mandatory="y" >
+				<comment><![CDATA[用户唯一标识码]]></comment>
+			</column>
 			<column name="updateTime" type="long" length="800" decimal="0" jt="-1" mandatory="y" >
 				<comment><![CDATA[更新时间]]></comment>
 			</column>
