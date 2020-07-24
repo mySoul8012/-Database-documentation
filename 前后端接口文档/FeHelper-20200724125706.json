@@ -1,0 +1,178 @@
+{
+    "info": {
+        "_postman_id": "7810d9ac-efa9-4b4a-ac4d-505e7bc966b6",
+        "name": "insurv-mina-node-api",
+        "description": "保险维生素的后端api文档",
+        "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "测评接口",
+            "_postman_id": "cf0fb82b-bd90-4a3f-9388-74da1aeeed81",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": {
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZjE2YjFkODY4ZDQ4ZDQzYzdmYzFmZGMiLCJpYXQiOjE1OTUzMjI4NDEsImV4cCI6MTU5NTkyNzY0MX0.LLsMZQMoryEjR4EkMDyhWpHq4O77n5sOTmtTjkaxMm4"
+                    }
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "author",
+                            "value": "5f18392654b8014b2e194b38",
+                            "description": "作者id",
+                            "type": "text"
+                        },
+                        {
+                            "key": "gender",
+                            "value": "0",
+                            "description": "性别",
+                            "type": "text"
+                        },
+                        {
+                            "key": "birthday",
+                            "value": "1997-04-31",
+                            "description": "出生日期",
+                            "type": "text"
+                        },
+                        {
+                            "key": "familyMember",
+                            "value": "[0,1,2]",
+                            "description": "家庭成员",
+                            "type": "text"
+                        },
+                        {
+                            "key": "personalDisposableIncome",
+                            "value": "34",
+                            "description": "可支配年收入",
+                            "type": "text"
+                        },
+                        {
+                            "key": "socialSecurity",
+                            "value": "0",
+                            "description": "有无社保",
+                            "type": "text"
+                        },
+                        {
+                            "key": "debtSituation",
+                            "value": "0",
+                            "description": "负债情况",
+                            "type": "text"
+                        }
+                    ],
+                    "options": {
+                        "formdata": {}
+                    }
+                },
+                "url": "http://localhost:3001/api/v1/companies/evaluation",
+                "description": "测评接口"
+            },
+            "response": [
+                {
+                    "id": "a4a1af8c-aaa5-4a08-97e5-f8b921ee6ff5",
+                    "name": "http://localhost:3001/api/v1/companies/evaluation",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "value": "application/x-www-form-urlencoded",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "author",
+                                    "value": "5f18392654b8014b2e194b38",
+                                    "description": "作者id",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "gender",
+                                    "value": "0",
+                                    "description": "性别",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "birthday",
+                                    "value": "1997-04-31",
+                                    "description": "出生日期",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "familyMember",
+                                    "value": "[0,1,2]",
+                                    "description": "家庭成员",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "personalDisposableIncome",
+                                    "value": "34",
+                                    "description": "可支配年收入",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "socialSecurity",
+                                    "value": "0",
+                                    "description": "有无社保",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "debtSituation",
+                                    "value": "0",
+                                    "description": "负债情况",
+                                    "type": "text"
+                                }
+                            ],
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "http://localhost:3001/api/v1/companies/evaluation"
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Vary",
+                            "value": "Origin"
+                        },
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json; charset=utf-8"
+                        },
+                        {
+                            "key": "X-Response-Time",
+                            "value": "5544ms"
+                        },
+                        {
+                            "key": "Content-Length",
+                            "value": "2628"
+                        },
+                        {
+                            "key": "Date",
+                            "value": "Fri, 24 Jul 2020 04:18:31 GMT"
+                        },
+                        {
+                            "key": "Connection",
+                            "value": "keep-alive"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    // 状态码\n    \"code\": 0,\n    // 数据\n    \"data\": {\n        // 作者id\n        \"author\": \"5f18392654b8014b2e194b38\",\n        // 作者性别\n        \"gender\": \"0\",\n        // 年龄\n        \"age\": 23,\n        // 家庭成员\n        \"familyMember\": \"[0,1,2]\",\n        // 个人可支配年收入\n        \"personalDisposableIncome\": \"34\",\n        // 有无社保\n        \"socialSecurity\": \"0\",\n        // 负债情况\n        \"debtSituation\": \"0\",\n        // 保险保障顺序\n        \"orderOfInsuranceCoverage\": [\n            \"重疾险\",\n            \"意外险\"\n        ],\n        // 推荐保险的相关文档\n        \"orderOfInsuranceCoverageDetailedIntroduction\": [\n            {\n                // id\n                \"_id\": \"5ee77dce770db57d9634cbea\",\n                // 保险名称\n                \"name\": \"重疾险\",\n                // 保险类型\n                \"type\": \"终身重疾\",\n                // 建议保额\n                \"recommendedSumAssured\": \"70万\",\n                // 建议保费\n                \"recommendedPremium\": \"8600元/年\",\n                // 详细说明\n                \"details\": {\n                    // 为什么要选择这个\n                    \"why\": \"患重疾后需要康复费用、护理费等，都将对家桶经济造成严重的打击。重疾险一次赔付，可以弥补重疾的经济损失。\",\n                    // 怎么选（重点）\n                    \"howToChooseTheFocus\": \"优先保证保额充足；\",\n                    // 怎么选\n                    \"howToChoose\": \"重疾引发的后续修养，短则一两年，长则一辈子，其中所需的费用不可小觑。因此重疾的保额需要涵盖三个方面：治疗费用、康复费用、收入损失。因为重疾险可以叠加，预算有限时买少点，之后再提高额度。\"\n                }\n            },\n            {\n                \"_id\": \"5ee77dce770db57d9634cbef\",\n                \"name\": \"意外险\",\n                \"type\": \"长期险\",\n                \"recommendedSumAssured\": \"70万\",\n                \"recommendedPremium\": \"470万\",\n                \"details\": {\n                    \"why\": \"通勤上班，外出旅行，独居家中，时刻都有意外发生的风险；而意外险杠杆高，保费便宜，结合现在的收入和年龄状况来看，推荐配置。\",\n                    \"howToChooseTheFocus\": \"关注身故伤残保额；\",\n                    \"howToChoose\": \"对于成年人来说，如遭遇意外身故或伤残，都会给家庭带来巨大伤害；另外伤残赔付是按照等级对应比例进行赔付，如果保额买的太低，伤残赔付额度就会更少，可能连医疗费都不够用。\"\n                }\n            }\n        ],\n        // 保障顺序\n        \"guaranteeOrder\": [\n            {\n                // 序号\n                \"serialNumber\": 5,\n                // 名称\n                \"insurance\": \"社保\",\n                // 详情\n                \"guaranteedContent\": \"一般指“五险一金”的“五险”：医疗保险、养老保险、工伤保险、生育保险和失业保险\",\n                // 评级\n                \"priority\": 5\n            },\n            {\n                \"serialNumber\": 4,\n                \"insurance\": \"意外险\",\n                \"guaranteedContent\": \"有交通事故、摔伤碰伤、猫抓狗咬等意外导致的伤害，包括身故及残疾\",\n                \"priority\": 4\n            },\n            {\n                \"serialNumber\": 4,\n                \"insurance\": \"重疾险\",\n                \"guaranteedContent\": \"弥补因罹患重大疾病而带来的经济损失\",\n                \"priority\": 4\n            },\n            {\n                \"serialNumber\": 3,\n                \"insurance\": \"医疗险\",\n                \"guaranteedContent\": \"弥补因生病带来的门诊/住院费用支出\",\n                \"priority\": 3\n            },\n            {\n                \"serialNumber\": 3,\n                \"insurance\": \"寿险\",\n                \"guaranteedContent\": \"如若遭遇身故及全残，受益人即可获赔保险金，体现家庭经济责任\",\n                \"priority\": 3\n            },\n            {\n                \"serialNumber\": 2,\n                \"insurance\": \"理财险\",\n                \"guaranteedContent\": \"分红型、储蓄型保险\",\n                \"priority\": 2\n            }\n        ],\n        // 是否是示例\n        \"sampleReport\": 1,\n        // 总保额\n        \"sumAssured\": \"140万\",\n        // 总保费\n        \"sumPremium\": \"9320元/年\",\n        // 创建时间\n        \"createTime\": 1595564311045,\n        // 更新时间\n        \"updateTime\": 1595564311045\n    },\n    \"message\": \"Ok\"\n}"
+                }
+            ]
+        }
+    ],
+    "protocolProfileBehavior": {}
+}
