@@ -1,0 +1,47 @@
+const schedule = require('node-schedule');
+const Broker = require("../app/models/broker")
+const BrokerEvaluation = require("../app/models/broker_evaluation")
+
+module.exports =  async function (ctx, next) {
+  ctx.body = "";
+
+  schedule.scheduleJob('30 1 1 * * *', async function () {
+    console.log('scheduleCronstyle:' + new Date());
+    // 暂时保存需要更新broker的id
+    let brokerId = [];
+    // 查询数据库，得出最近更新的id,100条
+    let brokerQuery = Broker.find().sort({"createTime": "desc"}).limit(100);
+    let brokerRes = await brokerQuery.exec();
+    //console.log(brokerRes);
+    for(let i = 0; i < brokerRes.length; i++){
+      brokerId[i] = brokerRes[i]._id;
+    }
+    //console.log(brokerId);
+    // 计算满意度
+    console.log(brokerId.length);
+    for(let i = 0; i < brokerId.length; i++){
+      // 计算满意度，打了五分的人的百分比
+      // 获取到五分的人数
+      let fivePointsQuery = BrokerEvaluation.find({"starRating": 5}).find({"brokerId": brokerId[i]}).count();
+      let fivePoints = await fivePointsQuery.exec();
+      // 获取总打分人数
+      let pointsQuery = BrokerEvaluation.find({"brokerId":brokerId[i]}).count();
+      let points = await pointsQuery.exec();
+      //console.log(fivePoints)
+      //console.log(points)
+      // 计算满意度
+      let satisfaction = 0;
+      if(points != 0) {
+        satisfaction = parseInt(fivePoints / points);
+      }else{
+        satisfaction = 0;
+      }
+      //console.log(satisfaction);
+      // 保存进入数据库中
+      let broker = Broker.update({"_id": brokerId[i]}, {$set: {"satisfaction": satisfaction}});
+      let brokerExec = broker.exec();
+    }
+  });
+
+  await next();
+}

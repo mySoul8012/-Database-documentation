@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const moment = require('moment')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const CommentLike = require('./comment-like')
+const Product = require('../models/product');
+
+const BrokerComment = new mongoose.Schema({
+	title: String, 																											// 点评标题
+	content: String,																										// 点评内容
+	pictures: [{type: String}],																					// 点评图片
+	oe: Number,																													// 整体评价 Overall product evaluation
+	ip: Number, 																												// 保障期限 Insured Period
+	ia: Number, 																												// 保障金额 Insured Amount
+	ic: Number, 																												// 保障范围 Insurance Cover
+	cp: Number, 																												// 性价比   Cost performance
+	rs: Number, 																												// 续保服务 Renewal Service
+	vas: Number,																												// 增值服务 value-added services
+}, { _id: false, versionKey: false })
+
+const CommonSchema = new mongoose.Schema({
+	done:{ type: NumberInt32, default: 0 }, // 是否会做此操作 0 不会 1 会
+	feedback: String												// 反馈意向 
+}, { _id: false })
+
+const UserCommentSchema = new mongoose.Schema({
+	name: String,                                                  				// 被保人姓名
+	idcard: String,																												// 被保人身份证号
+	channel: { type: NumberInt32, default: 0 },														// 购买渠道 0 代理人 1 官网 2 其他
+	claim: { type: NumberInt32, default: 0 },															// 是否理赔 0 否 1 是
+	content: String,																											// 点评内容
+	pictures: [{type: String}],																						// 点评图片
+	ope: Number,																													// 产品整体评价 Overall product evaluation
+	pp: Number,																														// 产品价格 Product Price
+	pc: Number,																														// 产品条款 Product Clause
+	ic: Number,																														// 保障全面 Insurance Cover
+	oce: Number,																													// 公司整体评价 Overall evaluation of the company
+	cs: Number,																													  // 客服服务 Customer Service
+	be: Number,																													  // 购买体验 Buying Experience
+	pt: Number,																													  // 价格透明 Price Transparent
+	recommend: CommonSchema,                                              // 推荐当前产品
+	renewal: CommonSchema	                                                // 续保当前产品
+}, { _id: false, versionKey: false })
+
+// 点评合并
+const CommentSchema = new mongoose.Schema({
+	company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true },		// 产品对应公司
+	product: { type: mongoose.Schema.Types.ObjectId, ref: 'ProductNew', required: true },		// 点评产品
+	author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },	

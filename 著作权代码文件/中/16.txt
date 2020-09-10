@@ -1,0 +1,48 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const ProductCategory = require('../../models/product-category');
+const ProductCategoryNew = require('../../models/categorynew');
+const ProductNew = require('../../models/productnew');
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId');
+
+// const cateList = require('./productCategorys');
+
+const products = [{
+  "age": "30天-65岁",
+  "companyName": "泰康在线",
+	"healthNotice": "",
+}];
+
+module.exports = {
+
+	async productCategory(ctx, next) {
+		const result = await ProductCategory.find({}, "-_id")
+		ctx.body = result
+	},
+
+	async productCategoryNew(ctx, next) {
+		const result = await ProductCategoryNew.find({}, "-_id")
+		ctx.body = result
+	},
+
+	async addChild(ctx, next) {
+		ctx.body = { }
+	},
+
+	async removeChild(ctx, next) {
+		ctx.body = { }
+	},
+
+	// async productCategoryInsert(ctx, next) {
+	// 	cateList.map((item) => {
+	// 		const c = new ProductCategoryNew(item);
+	// 		c.save((err) => {
+	// 			console.log('导入错误 ：', item, '=====err:', err);
+	// 		});
+	// 	});
+
+	// 	console.log('导入成功');
+	// },
+
+}

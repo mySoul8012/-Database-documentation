@@ -1,0 +1,49 @@
+// 保额模型
+const mongoose = require('mongoose')
+const Evaluation = require('../models/evaluation');
+const CategoryNew1 = require('../models/categorynew1');
+const equal = require('equals')
+const exactens = require('../lib/ExactTens')
+const ChinessToNumber = require('../lib/chineseToNumber');
+
+module.exports = async function (data, coverage, coverageIntro) {
+
+  // 保额计算
+  for (let i = 0; i < arguments[1].length; i++) {
+    // 21-30周岁
+    if (data.age >= 21 && data.age <= 30) {
+      // 计算可支配收入
+      if (data.personalDisposableIncome >= 0 && data.personalDisposableIncome <= 10) {
+        // 判断险种
+        if (coverage[i] == "重疾险") {
+          coverageIntro[i].sumAssured = "20万元";
+        }
+        if (coverage[i] == "意外险") {
+          coverageIntro[i].sumAssured = "20万元";
+        }
+      }
+      if (data.personalDisposableIncome > 10 && data.personalDisposableIncome <= 20) {
+        if (coverage[i] == "重疾险") {
+          coverageIntro[i].sumAssured = "30万";
+        }
+        if (coverage[i] == "意外险") {
+          coverageIntro[i].sumAssured = "30万"
+        }
+      }
+      if (data.personalDisposableIncome > 20 && data.personalDisposableIncome <= 30) {
+        if (coverage[i] == "重疾险") {
+          coverageIntro[i].sumAssured = "50万";
+        }
+        if (coverage[i] == "意外险") {
+          coverageIntro[i].sumAssured = "50万"
+        }
+      }
+      if (data.personalDisposableIncome > 30) {
+        if (coverage[i] == "重疾险") {
+          coverageIntro[i].sumAssured = "70万";
+        }
+        if (coverage[i] == "意外险") {
+          coverageIntro[i].sumAssured = "70万"
+        }
+      }
+    }

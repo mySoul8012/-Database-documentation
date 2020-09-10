@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const NumberInt32 = require('mongoose-int32')
+const Broker = require('../../models/broker')
+const Branch = require('../../models/branch')
+const Company = require('../../models/company')
+const Comment = require('../../models/comment')
+const Product = require('../../models/product');
+const ProductNew = require('../../models/productnew')
+const Favorite = require('../../models/favorite')
+const CommentLike = require('../../models/comment-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+
+module.exports = {
+	async index(ctx, next) {
+		let query = {hidden: 0}, sort = {}
+
+		if ( typeof ctx.query.type !== 'undefined' && ctx.query.type !== '' ){
+			query.type = ctx.query.type
+		}
+
+		let sortQuery = ctx.query.sort && parseInt(ctx.query.sort, 10) || 0 === 1
+			? {overallScore: -1, _id: -1}
+			: {nrOfComments: -1, _id: -1}
+
+		const [total, items] = await Promise.all([
+			Company.count(query).exec(),
+			Company.find(query).sort(sortQuery).limit(ctx.query.size).skip(ctx.query.offset).exec()
+	  ])
+
+		let companies = await Promise.all(_.map(items, async (item, index) => {
+			let ranking = await Company.count({$and: [{ "overallScore": { "$gt": 0 } }, { "overallScore": { "$gte": item.overallScore } }, {"_id" : { "$gte": item._id } }, {"type": item.type} ]})
+			return { ...item.simpleInfoJSON(), ranking: ranking > 0 ? ranking : null }
+		}))
+
+		ctx.body = { total, items: companies, hasNext: total != items.length && items.length >= ctx.query.size }
+	},
+
+	async show(ctx, next) {
+		ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+		let column = await Company.findById(ctx.params.id)
+		ctx.abortWithError(column, new APIError({ error_code: 21400, message: '公司记录未找到或不存在' }))
+		let isFavorite = await Favorite.findOne({_owner: ctx.state.uid, company: column.id, tag: 0}).lean()
+		let ranking = null;
+		if (column.overallScore) {
+			if (column.overallScore == 5) {
+				ranking = 1;
+			} else {
+				ranking = await Company.count({$and: [{ "overallScore": { "$gt": 0 } }, { "overallScore": { "$gt": column.overallScore } }, {"type": column.type} ]});

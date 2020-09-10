@@ -1,0 +1,50 @@
+const _ = require("lodash");
+const mongoose = require('mongoose');
+require('mongoose-long')(mongoose);
+const NumberInt32 = require('mongoose-int32');
+const config = require('../../conf')
+const Product = require('./product')
+const Comment = require('./comment')
+const moment = require('moment')
+
+/**
+ * 文档详细信息
+ */
+const ItemDetail = new mongoose.Schema({
+  // 为什么
+  why: {type: mongoose.Schema.Types.String},
+  // 如何选（重点）
+  howChooseFocus: {type: mongoose.Schema.Types.String},
+  // 如何选
+  howChoose: {type: mongoose.Schema.Types.String}
+})
+
+/**
+ * 推荐保险的相关文档
+ */
+const OrderOfICDIItem = new mongoose.Schema({
+  _id: {type: mongoose.Schema.Types.ObjectId, ref: 'product_category_new'},
+  // 名称
+  name: {type: mongoose.Schema.Types.String},
+  // 类型
+  type: {type: mongoose.Schema.Types.String},
+  // 总保额
+  sumAssured: {type: mongoose.Schema.Types.String},
+  // 总保费
+  recommendPremium: {type: mongoose.Schema.Types.String},
+  // 详细信息
+  details: ItemDetail
+})
+
+/**
+ * 险种
+ */
+const GOrder = new mongoose.Schema({
+  // 序号
+  serialNumber: mongoose.Schema.Types.Number,
+  // 名称
+  insurance: mongoose.Schema.Types.String,
+  // 详情
+  guarContent: mongoose.Schema.Types.String,
+  // 评级
+  priority: mongoose.Schema.Types.Number

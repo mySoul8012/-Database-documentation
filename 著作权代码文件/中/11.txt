@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Broker = require('../../models/broker')
+const Product = require('../../models/product')
+const Question = require('../../models/question')
+const Answer = require('../../models/answer')
+const Comment = require('../../models/comment')
+const Favorite = require('../../models/favorite')
+const CommentLike = require('../../models/comment-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+
+module.exports = {
+
+	async index(ctx, next) {
+		// TODO 显示评论点赞数最多的一条
+		let query = {}, sort = {}
+
+		if( typeof ctx.query.category1 !== 'undefined' && ctx.query.category1 !== '' && ctx.query.category1 !== '全部' ){
+			query.category1 = ctx.query.category1
+		}
+
+		if( typeof ctx.query.category2 !== 'undefined' && ctx.query.category2 !== '' && ctx.query.category2 !== '全部' ){
+			query.category2 = ctx.query.category2
+		}
+
+		let sortQuery = ctx.query.tag && parseInt(ctx.query.tag, 10) || 0 === 1
+			? {overallScore: -1, _id: -1}
+			: {nrOfComments: -1, _id: -1}
+
+		const [total, items] = await Promise.all([
+			Product.count(query).exec(),
+			Product.find(query).populate('company').sort(sortQuery).limit(ctx.query.size).skip(ctx.query.offset).exec()
+		])
+
+		let products = await Promise.all( _.map(items, async (item, index) => {
+			let ranking = await Product.count({$and: [{ "overallScore": { "$gt": 0 } }, { "overallScore": { "$gte": item.overallScore } }, {"_id" : { "$gte": item.id } }, {"category1": item.category1} ]})
+			const [comment] = await Comment.find({product: item.id}, '-_id content').sort({ nrOfLikes: -1, _id: -1 }).skip(0).limit(1)
+			return { ...item.simpleInfoJSON(), comment: comment ? comment.content : null, ranking: ranking > 0 ? ranking : null }
+		}))
+		ctx.body = { total, items: products, hasNext: total != items.length && items.length >= ctx.query.size }
+	},
+
+	async hot(ctx, next) {
+		const [total, items] = await Promise.all([
+			Product.count({}).exec(),
+			Product.find({}).populate('company').sort({ nrOfComments: -1, createTime: -1 }).limit(ctx.query.size).skip(ctx.query.offset).exec()
+		])
+
+		let products = await Promise.all( _.map(items, async (item, index) => {

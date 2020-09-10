@@ -1,0 +1,50 @@
+/**
+ * API错误名称
+ */
+let ApiErrorNames = {}
+
+ApiErrorNames.UNKNOW_ERROR = "UNKNOW_ERROR"
+ApiErrorNames.UNANTHORIZED = "UNANTHORIZED"
+ApiErrorNames.INVALID_ANTHORIZED_TOKEN = "INVALID_ANTHORIZED_TOKEN"
+
+ApiErrorNames.PARAMETER_IS_INVALID = 'PARAMETER_IS_INVALID'
+ApiErrorNames.PARAMETER_IS_BLANK = 'PARAMETER_IS_BLANK'
+ApiErrorNames.PARAMETER_TYPE_BIND_ERROR = 'PARAMETER_TYPE_BIND_ERROR'
+ApiErrorNames.PARAMETER_NOT_COMPLETE = 'PARAMETER_NOT_COMPLETE'
+
+ApiErrorNames.INVALID_OBJECTID = "INVALID_OBJECTID"
+
+ApiErrorNames.USER_NOT_EXIST = "USER_NOT_EXIST"
+ApiErrorNames.ACCOUNT_FROZAN = "ACCOUNT_FROZAN"
+
+ApiErrorNames.COMPANY_NOT_EXIST = "COMPANY_NOT_EXIST"
+
+ApiErrorNames.PRODUCT_NOT_EXIST = "PRODUCT_NOT_EXIST"
+
+ApiErrorNames.QUESTION_NOT_EXIST = "QUESTION_NOT_EXIST"
+
+ApiErrorNames.ANSWER_NOT_EXIST = "ANSWER_NOT_EXIST"
+
+
+/**
+ * API错误名称对应的错误信息
+ */
+const Errors = new Map()
+
+Errors.set(ApiErrorNames.UNKNOW_ERROR, { error_code: -1, message: '未知错误' })
+/* 请求授权错误：20401 */
+Errors.set(ApiErrorNames.UNANTHORIZED, { error_code: 20401, message: '请求缺少必要的请求参数Authorized Token' })
+Errors.set(ApiErrorNames.INVALID_ANTHORIZED_TOKEN, { error_code: 20401, message: '无效或过期请求Authorized Token，请检查Token是否填写正确！' })
+/* 参数错误：20001-20999 */
+Errors.set(ApiErrorNames.PARAMETER_IS_INVALID, { code: 21001, message: '参数无效' })
+Errors.set(ApiErrorNames.PARAMETER_IS_BLANK, { code: 21002, message: '参数为空' })
+Errors.set(ApiErrorNames.PARAMETER_TYPE_BIND_ERROR, { code: 21003, message: '参数类型错误' })
+Errors.set(ApiErrorNames.PARAMETER_NOT_COMPLETE, { code: 21004, message: '参数缺失' })
+Errors.set(ApiErrorNames.INVALID_OBJECTID, { error_code: 21400, message: '无效或非法的资源ID' })
+/* 用户错误：21000-21999*/
+Errors.set(ApiErrorNames.USER_NOT_EXIST, { error_code: 22401, message: '用户未找到或不存在' })
+Errors.set(ApiErrorNames.ACCOUNT_FROZAN, { error_code: 22402, message: '账户冻结不可使用' })
+/* 保险公司错误：22000-22999*/
+Errors.set(ApiErrorNames.COMPANY_NOT_EXIST, { error_code: 23401, message: '公司未找到或不存在' })
+/* 保险产品错误：23000-23999*/
+Errors.set(ApiErrorNames.PRODUCT_NOT_EXIST, { error_code: 24401, message: '产品未找到或不存在' })

@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const NumberInt32 = require('mongoose-int32')
+const Search = require('../../models/search')
+const Company = require('../../models/company')
+const ProductNew = require('../../models/productnew')
+
+module.exports = {
+
+	async match(ctx, next) {
+		let keyword = '', companyQuery = {}, productQuery = {}
+
+		if (ctx.query.keyword || ctx.query.kw) {
+			keyword = ctx.query.keyword || ctx.query.kw
+			console.log('keyword:  90999999: ', ctx.query);
+			const regex = new RegExp(keyword, 'i')
+			companyQuery = {$or: [{fullName: {$regex: regex}}, {shortName: {$regex: regex}}]}
+			productQuery = {productName: {$regex: regex}}
+		}
+		const [companies, products] = await Promise.all([
+			Company.find(companyQuery).limit(ctx.query.size || 10).exec(),
+			ProductNew.find(productQuery).limit(ctx.query.size || 10).exec()
+		])
+		ctx.body = { 
+			companies: _.map(companies, c => { return { id: c._id, name: c.fullName } }) , 
+			products: _.map(products, p => { return {id: p._id, name: p.productName } }) 
+		}	
+	},
+
+	async search(ctx, next) {
+		let keyword='',companyQuery = {}, productQuery = {}
+
+		let limit = 10
+		let cLimit = ctx.query.page > 1 ? 0 : limit
+		let pLimit = ctx.query.page > 1 ? parseInt(ctx.query.limit): limit
+		let cOffset = ctx.query.page > 1 ? 0 : (ctx.query.page - 1) * cLimit
+		let pOffset = ctx.query.page > 1 ? ctx.query.offset : (ctx.query.page - 1) * pLimit
+
+		if (ctx.query.keyword || ctx.query.kw) {
+			keyword = ctx.query.keyword || ctx.query.kw
+			const regex = new RegExp(keyword, 'i')
+			companyQuery = {$or: [{fullName: {$regex: regex}}, {shortName: {$regex: regex}}]}
+			productQuery = {productName: {$regex: regex}}
+			await Search.create({_owner: ctx.state.uid, muid: ctx.state.muid, keyword})
+		}
+		const [companies, products, ptotal] = await Promise.all([
+			Company.find(companyQuery).limit(cLimit).skip(cOffset).exec(),
+			ProductNew.find(productQuery).populate('company').limit(pLimit).skip(pOffset).exec(),
+			ProductNew.count(productQuery).exec()
+		])

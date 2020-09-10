@@ -1,0 +1,41 @@
+const _ = require('lodash')
+const moment = require('moment')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+
+const BrokerSchema = new mongoose.Schema({
+	// 用户id
+	_owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },     // 用户ID
+	// 用户姓名
+	name: String,
+	// 经纪人身份证号
+	idcard: String,
+	// 经纪人资格证书
+	credential: String,
+	// 职业编号
+	license: String,
+	// 验证状态 0 验证中 1 验证成功 2 验证失败
+	verified: { type: NumberInt32, default: 0 },
+	// 一句话简介
+	introduction: {type: String},
+	// 所属公司
+	company: {type: String},
+	// 擅长标签id
+	labelId: [{type: mongoose.Schema.Types.ObjectId}],
+	// 满意度
+	satisfaction: {type: Number},
+	// 电话
+	phoneNumber: {type: String},
+	// evaluation_count 对该经纪人评论数量的多少
+	evaluationCount: {type: Number},
+	createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+	updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
+
+BrokerSchema.methods.toInfoJSON = function(){
+	const { id, name, idcard, _owner, credential, license, verified } = this
+  return { id, name, idcard, avatarUrl: _owner.avatarUrl, credential, license, verified }
+}
+
+module.exports = mongoose.model('Broker', BrokerSchema, 'brokers')

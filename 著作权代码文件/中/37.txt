@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const moment = require('moment')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const Product = require('./product')
+const Comment = require('./comment')
+const config = require('../../conf')
+
+const CompanySchema = new mongoose.Schema({
+	infoId: String,
+	columnId: String,
+  type: String,  
+	fullName: String,
+  shortName: String,
+  pictureUrl: String,
+  management: String,    // 运营能力
+  solvency: String,      // 偿付能力
+  srvrating: String,     // 服务评级
+  websiteName: String,
+  websiteUrl: String,
+  application: String,
+  officialAccount: String,
+  informationUrl: String,
+	telephone: String,
+  nrOfComments: { type: NumberInt32, default: 0 },
+  overallScore: { type: Number, default: 5.0 },
+  vValue: { type: Number, default: 5.0 },
+  vValues: { },
+  deleted: { type: NumberInt32, default: 0 },
+  createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+  updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
+
+CompanySchema.methods.simpleInfoJSON = function(){
+  const {id, type, pictureUrl, fullName, shortName, nrOfComments, overallScore, telephone} = this
+  return {id, type, pictureUrl, fullName, shortName, nrOfComments, overallScore,  telephone}
+}
+
+CompanySchema.methods.infoJSON = function(){
+  return { 
+    id: this.id,
+    type: this.type,
+    pictureUrl: this.pictureUrl,
+    fullName: this.fullName,
+    shortName: this.shortName,
+    management: this.management,
+    solvency: this.solvency,
+    srvrating: this.srvrating,
+    websiteName: this.websiteName,

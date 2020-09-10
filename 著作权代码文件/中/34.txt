@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const moment = require('moment')
+const Logger = require('../lib/logger')
+const AnswerLike = require('./answer-like')
+
+const AnswerSchema = new mongoose.Schema({
+	question: { type: mongoose.Schema.Types.ObjectId, ref: 'Question'},			  // 回答所属的问题ID
+	author: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},							// 回答创建者ID
+	formid: { type: String, required: true },																	// 小程序表单提交 formID
+	content: { type: String, required: true },																// 回答内容
+	pictures: [{type: String}],																								// 图片
+	nrOfLikes: { type: NumberInt32, default: 0 },															// 点赞数
+	hidden:  { type: NumberInt32, default: 0 },																// 隐藏状态	 0 显示 1 隐藏
+	reason: { type: String, default: null },																	// 隐藏原由
+	deleted:  { type: NumberInt32, default: 0 },															// 删除状态 0 保留 1 删除
+	createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+	updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
+
+AnswerSchema.methods.infoJSON = function() {
+	const {id, content, pictures, nrOfLikes, createTime} = this
+	return {id, content, pictures, nrOfLikes, createTime}
+}
+
+AnswerSchema.methods.infoJSONForMineAnswer = function() {
+	const {id, product, content, pictures, nrOfAnswers, createTime} = this.question;
+	return {
+		product: { id: product.id, name: product.productName },
+		question: { id, content, pictures, nrOfAnswers, createTime },
+		answer: { id: this.id, content: this.content, pictures: this.pictures, nrOfLikes: this.nrOfLikes, createTime: this.createTime }
+	}
+}
+
+AnswerSchema.methods.basicInfoForAdminView = function() {
+	let { id, author, content, nrOfLikes, hidden, reason, deleted, createTime, updateTime } = this
+	author = { id: author._id, nickName: author.nickName, avatarUrl: author.avatarUrl }
+	return { id, author, content, nrOfLikes, hidden, reason, deleted, createTime, updateTime }
+}
+
+AnswerSchema.methods.updateLike = function() {
+	let answer = this;
+	return AnswerLike.count({answer: answer._id}).then(function(count) {
+		return answer.update({nrOfLikes: count});
+	})
+}
+
+AnswerSchema.methods.updateHide = function(answer, isHide) {

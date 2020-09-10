@@ -1,0 +1,49 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Question = require('../../../models/question')
+const APIError = require('../../../errors/APIError')
+const InvalidObjectId = require('../../../errors/InvalidObjectId')
+
+module.exports = {
+
+  async index(ctx, next) {
+    let query = {}, sort = {createTime: -1}
+
+    if( typeof ctx.query.productId !== 'undefined' ){
+      query.product = ctx.query.productId
+    }
+    const [total, items] = await Promise.all([
+      Question.count(query).exec(),
+      Question.find(query).limit(ctx.query.size).populate('author').skip(ctx.query.offset).sort(sort).exec()
+    ])
+    ctx.body = { total, items: _.map(items, item => {return item.basicInfoForAdminView()}),hasNext: total != items.length && items.length >= ctx.query.size }
+  },
+
+  async show(ctx, next) {
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+    let question = await Question.findById(ctx.params.id).populate('author')
+    ctx.abortWithError(question, new APIError(21400, '查询的问题记录没找到或不存在'))
+    ctx.body = question.basicInfoForAdminView()
+  },
+
+  async search(ctx, next) {
+    let query = {}, sort = {createTime: -1}
+
+    if (ctx.query.keyword || ctx.query.kw) {
+      const keyword = ctx.query.keyword || ctx.query.kw
+      const regex = new RegExp(keyword, 'i')
+      query = {content: {$regex: regex}}
+    }
+    const [total, items] = await Promise.all([
+      Question.count(query).exec(),
+      Question.find(query).limit(ctx.query.size).populate('author').skip(ctx.query.offset).sort(sort).exec()
+    ])
+    ctx.body = { total, items: _.map(items, item => {return item.basicInfoForAdminView()}),hasNext: total != items.length && items.length >= ctx.query.size }
+  },
+
+  async create(ctx, next) {
+    const { productId, content, pictures } = ctx.request.body
+    const question = new Question({ product: productId, author: ctx.state.uid, content, pictures })
+    await question.save()
+    ctx.body = { id: question.id, content, pictures }
+  },

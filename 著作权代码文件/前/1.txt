@@ -1,0 +1,50 @@
+﻿const Koa2 = require('koa')
+const koaBody = require('koa-body');
+const convert = require('koa-convert')
+const KoaBetterBody = require('koa-better-body')
+const cors = require('koa2-cors')
+const koaStatic = require('koa-static')
+const path = require('path')
+const responseTime = require('koa-response-time')
+const Moment = require('moment')
+
+const schedule = require('node-schedule')
+
+const router = require('./routes')
+const config = require('../conf')
+const logger = require('./lib/logger')
+require('./db/mongodb') // 初始化Mongodb
+
+const AuthRequired = require('./middlewares/auth-required-middleware')
+const Logger = require('./middlewares/logger-middleware')
+const ErrorHandler = require('./middlewares/error-middleware')
+
+const _ = require('lodash')
+const NotFoundError = require('./errors/NotFoundError')
+
+const Task = require('./task/index');
+
+schedule.scheduleJob('*/5 * * * * *',async function(){
+  await Task.updateProductAndCompanyComments();
+  await Task.updateProductAndCompanyValues();
+  // await Task.initCompanyVValue();
+  await Task.updateProductVValue()
+  await Task.updateCompanyVValue()
+});
+
+schedule.scheduleJob('* */30 * * * *', async ()=>{
+  await Task.updateProductVValue()
+  await Task.updateCompanyVValue()
+})
+
+// Create Koa Application
+const app = new Koa2()
+app.context.config = config
+app.context.Logger = logger
+app.context.Moment = Moment
+app.context.abortWithError = (value, msg, opts) => app.context.assert(value, 400, msg, opts)
+app.silent = true
+
+app.use(koaStatic(path.join( __dirname, '../public')))
+
+app.use(ErrorHandler)

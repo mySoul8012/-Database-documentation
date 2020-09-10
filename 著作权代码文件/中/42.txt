@@ -1,0 +1,49 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const moment = require('moment')
+const jwt = require('../lib/jwt')
+const Logger = require('../lib/logger')
+
+const UserSchema = new mongoose.Schema({
+	openid: String,
+	unionid: String,
+	nickName: String,
+	gender: NumberInt32,
+	country: String,
+	city: String,
+	province: String,
+	language: String,
+	avatarUrl: String,
+	wxCode: String,
+  sessionKey: String,
+  token: String,
+  frozen: { type: NumberInt32, default: 0 }, //ÕËºÅ¶³½á ·âºÅ
+  expireTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() } },
+	createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+	updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
+
+UserSchema.pre('save', function(next) {
+  next()
+})
+
+UserSchema.pre('findOneAndUpdate', function() {
+	this.update({},{ $set: { expireTime: moment().add(7, 'd').format('x'), updateTime: moment().format('x') } })
+})
+
+UserSchema.methods.generateJWT = function() {
+	this.token = jwt.sign({ uid: this.id })
+	this.save()
+  return this.token
+}
+
+UserSchema.statics.updateInfo = function(_id, info, cb){
+  return this.updateOne({ _id },{ $set: { ...info, updateTime: moment().format('x') } }, { new: true, upsert: true })
+}
+
+UserSchema.methods.toInfoJSON = function(){
+	const { id, nickName, gender, country, city, province, language, avatarUrl } = this
+  return { id, nickName, gender, country, city, province, language, avatarUrl }
+}

@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const AliOSS = require('ali-oss')
+const config = require('../../../conf')
+const APIError = require('../../errors/APIError')
+
+const AliOssClient = new AliOSS(config.alioss)
+// const fileTypes = [
+//   'image/jpg', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml',
+//   'video/x-msvideo', 'audio/mpeg', 'video/mpeg', 'audio/mp4', 'video/mp4',
+//   'application/octet-stream', 'application/pkcs12', 'application/vnd.mspowerpoint', 'application/xhtml+xml', 'application/xml', 'application/pdf'
+// ]
+
+
+function randomString(length, chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+  let result = ''
+  for (let i = length; i > 0; i -= 1) result += chars[Math.floor(Math.random() * chars.length)]
+  return result
+}
+
+// 考虑使用数据库字段名作为文件名 存放在用户的open_id文件下(ali oss生成的文件目录)
+exports.upload = async ctx => {
+  const { name, type, size, path } = ctx.request.files[0]
+  ctx.assert(size <= 2*1024*1024, 400, new APIError(23001, '上传文件的大小必须小于25M!'))
+  console.log('Log', 'admin-console', `UPLOAD FILE [name:${name.toString('utf8')}, type:${type}, size: ${size}]`)
+
+  const [, ext] = name.split('.')
+  const objectName = `uc/${name}`
+  const result = await AliOssClient.put(objectName, path)
+  // await AliOssClient.putACL(objectName, 'public-read')
+  ctx.body = { name: objectName, url: result.url }
+}
+
+exports.upload2 = async ctx => {
+  const files = ctx.request.files
+
+  const results = await Promise.all(_.map(files, async file => {
+    const { name, type, size, path } = file
+    ctx.Logger.debug('Log', `UPLOAD FILE [name:${name.toString('utf8')}, type:${type}, size: ${size}]`)
+    return await AliOssClient.put(`uc/${name}`, path)
+  }))
+
+  // await Promise.all(_.map(files, async file => {
+  //   const { name, type, size, path } = file
+  //   return await AliOssClient.putACL(`uc/${name}`, 'public-read')
+  // }))
+  ctx.body = _.map(results, result => { return result.url })
+}
+
+exports.upload3 = async ctx => {
+  const { name, type, size, path } = ctx.request.files[0]

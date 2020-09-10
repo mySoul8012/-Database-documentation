@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Broker = require('../../models/broker')
+const Product = require('../../models/product');
+const ProductNew = require('../../models/productnew');
+const Answer = require('../../models/answer')
+const Question = require('../../models/question')
+const AnswerLike = require('../../models/answer-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+
+module.exports = {
+
+  async index(ctx, next) {
+    ctx.abortWithError(ctx.query.productId, new APIError({ error_code: 21401, message: 'productId 不可为空' }))
+    const product = await ProductNew.findById(ctx.query.productId)
+    ctx.abortWithError(product, new APIError({ error_code: 21400, message: '产品记录未找到或不存在' }))
+
+    let filterQuery = { product: product._id, hidden: 0, deleted: 0 }
+    let sortQuery = ctx.query.tag && parseInt(ctx.query.tag, 10) || 0 === 1
+      ? {_id: -1}
+      : {nrOfAnswers: -1, _id: -1}
+
+    const [total, items] = await Promise.all([
+      Question.count(filterQuery).exec(),
+      Question.find(filterQuery).populate('author', '_id nickName avatarUrl').populate('product', '-_id name').limit(ctx.query.size).skip(ctx.query.offset).sort(sortQuery).exec()
+    ])
+
+    const questions = await Promise.all(_.map(items, async question => {
+      let { id, product, author, content, pictures, nrOfAnswers, createTime, updateTime } = question
+      const broker = await Broker.findOne({_owner: author._id, verified: 1}).lean()
+      author = broker ?  {nickName: broker.name, avatarUrl: broker.avatarUrl, isBroker: 1, verified: broker.verified} : {nickName: author.nickName, avatarUrl: author.avatarUrl, isBroker: 0, verified: 0}
+      let [answer] = await Answer.find({question: id, hidden: 0, deleted: 0}, '-_id content').sort({ nrOfLikes: -1, createTime: -1 }).skip(0).limit(1)
+      return { id, product, author, content, pictures, answer, nrOfAnswers, createTime, updateTime }
+    }))
+    ctx.body = { total, items:questions, hasNext: total != items.length && items.length >= ctx.query.size }
+  },
+
+  async show(ctx, next) {
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+    let question = await Question.findById(ctx.params.id).populate('product', '-_id name').populate('author', '_id nickName avatarUrl')
+    ctx.abortWithError(question, new APIError(21400, '问题记录没找到或不存在'))
+    // ctx.abortWithError(question.hidden === 0, new APIError(21419, '当前问题因违反平台规定，已被系统管理员屏蔽隐藏'))
+    // ctx.Logger.debug('问答详情', question)
+    // product = await Product.findById(comment.product).populate('company').then(res => { return res.simpleInfoJSON() })
+    // const isLike = await CommentLike.findOne({comment: id, _owner: ctx.state.uid}).lean()
+
+    let myAnswer = await Answer.findOne({question: ctx.params.id, author: ctx.state.uid, deleted: 0, hidden: 0 })
+    let { id, product, author, content, pictures, nrOfAnswers, createTime, updateTime } = question
+    const broker = await Broker.findOne({_owner: author._id, verified: 1}).lean()

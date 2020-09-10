@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Broker = require('../../models/broker')
+const Answer = require('../../models/answer')
+const Question = require('../../models/question')
+const AnswerLike = require('../../models/answer-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+
+module.exports = {
+
+  async index(ctx, next) {
+    console.log('answer ctx: ', ctx);
+    ctx.abortWithError(ctx.query.questionId, new APIError({ error_code: 21401, message: 'questionId 不可为空' }))
+    const question = await Question.findById(ctx.query.questionId)
+    ctx.abortWithError(question, new APIError({ error_code: 21400, message: '问题记录未找到或不存在' }))
+
+    let filterQuery = { question: question._id, hidden: 0, deleted: 0 }, sortQuery = { nrOfLikes: -1, _id: -1 } // 默认的搜索条件和排序条件
+
+    const [total, items] = await Promise.all([
+      Answer.count(filterQuery).exec(),
+      Answer.find(filterQuery).limit(ctx.query.size).populate('author', '_id nickName avatarUrl').sort(sortQuery).limit(ctx.query.size).skip(ctx.query.offset).exec()
+    ])
+
+    const answers = await Promise.all(_.map(items, async item => {
+      const {id, author, content, pictures, nrOfLikes, createTime} = item
+      const broker = await Broker.findOne({_owner: author._id}).lean()
+      author = broker ? {nickName: broker.name, avatarUrl: broker.avatarUrl, isBroker: 1, verified: broker.verified} : {nickName: author.nickName, avatarUrl: author.avatarUrl, isBroker: 0, verified: 0}
+      const isLike = AnswerLike.findOne({answer: item._id, owner: ctx.state.uid})
+      return { id, author, content, pictures, nrOfLikes, createTime, isLike: isLike ? 1 : 1 }
+    }))
+    ctx.body = { total, items: answers, hasNext: total != items.length && items.length >= ctx.query.size }
+  },
+
+  async show(ctx, next) {
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+    let answer = await Answer.findOne({_id: ctx.params.id, deleted: 0}, 'question content nrOfLikes createTime pictures');
+    ctx.abortWithError(answer, new APIError({ error_code: 21400, message: `回答未找到或不存在` }));
+    ctx.body = answer.infoJSON();
+  },
+
+  async create(ctx, next) {
+    const { questionId, formid, content, pictures } = ctx.request.body
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(questionId), InvalidObjectId)
+    let question = await Question.findById({_id: questionId})
+    ctx.abortWithError(question, new APIError({ error_code: 21400, message: `问题未找到或不存在` }))
+    let preAnswer = await Answer.findOne({question: questionId, author: ctx.state.uid, deleted: 0 });
+    ctx.abortWithError(!preAnswer, new APIError({ error_code: 21400, message: `问题不允许多次回答` }))
+    let answer = await Answer.create({ author: ctx.state.uid, question: questionId, formid, content, pictures })
+    await question.updateAnswerCount()

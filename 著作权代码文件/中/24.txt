@@ -1,0 +1,50 @@
+
+const CategoryNew1 = require('../models/categorynew1');
+const CriticalIllnessInsurancePremium = require("../lib/criticalIllnessInsurancePremium")
+const MedicalInsurancePremium = require("../lib/medicalInsurancePremium");
+const AccidentInsurancePremium = require("../lib/accidentInsurancePremium");
+const LifeInsurancePremium = require("./lifeInsurancePremium")
+const DetailedPremium = require("../lib/detailedPremium")
+const GuaranteeInformation = require("../lib/guaranteeInformation");
+const InsuredAmountInformation = require("../lib/insuredAmountInformation")
+const RecommendedType = require("../lib/recommendedType")
+const OrderOfInsuranceCoverage = require("../lib/orderOfInsuranceCoverage")
+// 保险评测模型  返回测评完成后的数据
+
+module.exports = async (data) => {
+  // 输入测评的数据
+  // 保险保障顺序
+  let coverage;
+  // 推荐保险的相关文档。
+  let coverageIntro = [];
+  // 总保额
+  let sumAssured;
+  // 总保费
+  let sumPremium;
+
+  coverage = await OrderOfInsuranceCoverage(data);
+
+  // 获取推荐保险的id
+  for (let i = 0; i < coverage.length; i++) {
+    let query = CategoryNew1.findOne({'name': coverage[i]});
+    await query.exec().then((res) => {
+      coverageIntro.push(
+          {
+            "_id": res._id,
+            "name": coverage[i]
+          }
+      )
+    })
+  }
+
+  // 获取推荐保险的推荐类型
+  // 保险的推荐类型
+  coverageIntro = await RecommendedType(data, coverage, coverageIntro);
+
+  // 建议保额
+  let insuredAmountInformation = await InsuredAmountInformation(data, coverage, coverageIntro);
+  coverageIntro = insuredAmountInformation.coverageIntro;
+  sumAssured = insuredAmountInformation.sumAssured;
+
+
+  // 保费部分

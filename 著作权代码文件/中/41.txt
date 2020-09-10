@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const moment = require('moment')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const Answer = require('./answer')
+
+const QuestionSchema = new mongoose.Schema({
+	company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true },		// 产品对应公司
+	product: { type: mongoose.Schema.Types.ObjectId, ref: 'ProductNew' },		// 问题所属的产品ID
+	author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },				// 问题的创建者ID
+	formid: { type: String, required: true },															// 小程序表单提交 formID
+	content: { type: String, required: true },													  // 问题描述
+	pictures: [{type: String}],																						// 图片
+	answer: { type: mongoose.Schema.Types.ObjectId, ref: 'Answer' },			// 最新的一条回答
+	nrOfAnswers: { type: NumberInt32, default: 0 },												// 回答数
+	hidden:  { type: NumberInt32, default: 0 },														// 隐藏状态	 0 显示 1 隐藏
+	reason: { type: String, default: null },															// 隐藏原由
+	deleted:  { type: NumberInt32, default: 0 },													// 删除状态 0 保留 1 删除
+	createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+  updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
+
+QuestionSchema.pre('findOneAndUpdate', function() {
+	this.update({},{ $set: { updateTime: moment().format('x') } })
+})
+
+QuestionSchema.methods.basicInfoJSON = function() {
+	const { id, content, product, nrOfAnswers, createTime, updateTime } = this
+	return { id, content, product: product, nrOfAnswers, createTime, updateTime }
+}
+
+QuestionSchema.methods.basicInfoWithAnswerJSON = function() {
+	const { id, content, answer, nrOfAnswers, createTime, updateTime } = this
+	return { id, content, answer: answer ? answer.content : null, nrOfAnswers, createTime, updateTime }
+}
+
+QuestionSchema.methods.basicInfoWithAuthorJSON = function() {
+	const { id, product, author, content, nrOfAnswers, createTime, updateTime } = this
+	return { id, product, author, content, nrOfAnswers, createTime, updateTime }
+}
+
+QuestionSchema.methods.basicInfoForAdminView = function() {
+	let { id, author, content, nrOfAnswers, hidden, reason, deleted, createTime, updateTime } = this
+	author = { id: author._id, nickName: author.nickName, avatarUrl: author.avatarUrl }
+	return { id, author, content, nrOfAnswers, hidden, reason, deleted, createTime, updateTime }
+}
+
+QuestionSchema.methods.updateAnswerCount = function () {
+	const question = this

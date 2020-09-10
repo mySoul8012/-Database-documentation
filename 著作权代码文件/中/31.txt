@@ -1,0 +1,50 @@
+// 保险的推荐类型
+const mongoose = require('mongoose')
+const Evaluation = require('../models/evaluation');
+const CategoryNew1 = require('../models/categorynew1');
+const equal = require('equals')
+const exactens = require('../lib/ExactTens')
+const ChinessToNumber = require('../lib/chineseToNumber');
+
+module.exports = async function (data, orderOfInsuranceCoverage, orderOfInsuranceCoverageDetailedIntroduction) {
+  for (let i = 0; i < orderOfInsuranceCoverage.length; i++) {
+    // 计算年龄
+    if (data.age >= 21 && data.age <= 30) {
+      // 计算可支配收入
+      if (data.personalDisposableIncome >= 0 && data.personalDisposableIncome <= 10) {
+        // 判断险种
+        if (orderOfInsuranceCoverage[i] == "重疾险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "1年期";
+        }
+        if (orderOfInsuranceCoverage[i] == "意外险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "短期险";
+        }
+      }
+      if (data.personalDisposableIncome > 10 && data.personalDisposableIncome <= 20) {
+        if (orderOfInsuranceCoverage[i] == "重疾险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "1年期";
+        }
+        if (orderOfInsuranceCoverage[i] == "意外险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "短期险"
+        }
+      }
+      if (data.personalDisposableIncome > 20 && data.personalDisposableIncome <= 30) {
+        if (orderOfInsuranceCoverage[i] == "重疾险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "终身重疾";
+        }
+        if (orderOfInsuranceCoverage[i] == "意外险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "长期险"
+        }
+      }
+      if (data.personalDisposableIncome > 30) {
+        if (orderOfInsuranceCoverage[i] == "重疾险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "终身重疾";
+        }
+        if (orderOfInsuranceCoverage[i] == "意外险") {
+          orderOfInsuranceCoverageDetailedIntroduction[i].type = "长期险"
+        }
+      }
+    }
+    if (data.age >= 31 && data.age <= 40) {
+      // 计算可支配收入
+      if (data.personalDisposableIncome >= 0 && data.personalDisposableIncome <= 10) {

@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const NumberInt32 = require('mongoose-int32')
+const Comment = require('../../../models/comment')
+const Product = require('../../../models/product')
+const UserComment = require('../../../models/user-comment')
+const BrokerComment = require('../../../models/broker-comment')
+const CommentLike = require('../../../models/comment-like')
+const APIError = require('../../../errors/APIError')
+const InvalidObjectId = require('../../../errors/InvalidObjectId')
+
+module.exports = {
+
+	async index(ctx, next) {
+    let query = {}, sort = {createTime: -1}
+
+    if( typeof ctx.query.productId !== 'undefined' ){
+      query.product = ctx.query.productId
+    }
+		const [total, items] = await Promise.all([
+			Comment.count(query).exec(),
+			Comment.find(query).populate('author', '-_id').sort(sort).limit(ctx.query.size).skip(ctx.query.offset).exec()
+		])
+
+		const comments = _.map(items, item => {
+			const { id, author: { nickName, avatarUrl }, oe, title, content, highlights, pictures, nrOfLikes, commentype, hidden, deleted, createTime, updateTime } = item
+			return { id, author: { nickName, avatarUrl }, oe, title, content, highlights, pictures, nrOfLikes, commentype, hidden, deleted,createTime, updateTime } 
+		})
+		ctx.body = { total, items: comments, hasNext: total != items.length && items.length >= ctx.query.size }
+	},
+
+	async show(ctx, next) {
+	  ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+	  let comment = await Comment.findOne({_id: ctx.params.id}).populate('author')
+	  const { id, author: { _id, nickName, avatarUrl }, oe, title, content, highlights, pictures, nrOfLikes, commentype, hidden, reason, deleted, createTime, updateTime } = comment
+		let formdata = commentype === 0 
+			? await UserComment.findOne({_id: ctx.params.id}, "-_id -author -product -createTime -updateTime") 
+			: await BrokerComment.findOne({_id: ctx.params.id}, "-_id -author -product -createTime -updateTime")
+		ctx.body = { id, author: { id: _id , nickName, avatarUrl }, oe, title, content, highlights, pictures, nrOfLikes, hidden, reason, deleted, commentype, formdata, createTime, updateTime }
+	},
+
+	async updateHighlight(ctx, next) {
+	  ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+	  const { highlights } = ctx.request.body
+	  await Comment.findOneAndUpdate({_id: ctx.params.id}, {$set: { highlights, updateTime: ctx.Moment().format('x') }}, {new: false, upsert: true})
+		ctx.body = "ok"
+	},
+
+  async hide(ctx, next) {
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)

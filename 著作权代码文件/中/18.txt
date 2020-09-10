@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const User = require('../../models/user')
+const Search = require('../../models/search')
+const Broker = require('../../models/broker')
+const Company = require('../../models/company')
+const Product = require('../../models/product')
+const ProductNew = require('../../models/productnew')
+const Favorite = require('../../models/favorite')
+const Question = require('../../models/question')
+const Answer = require('../../models/answer')
+const Comment = require('../../models/comment')
+const CommentLike = require('../../models/comment-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+
+// const userlist = require('./users2')
+// const fs = require('fs')
+
+module.exports = {
+
+  async index(ctx, next) {
+    const [total, items] = await Promise.all([
+      User.count({}).exec(),
+      User.find({}).limit(ctx.query.size).skip(ctx.query.offset).sort({createTime: 'desc'}).exec()
+    ])
+    ctx.body = { total, items: _.map(items, (item) => {return item.toInfoJSON()}), hasNext: total != items.length && items.length >= ctx.query.size }
+  },
+
+  async show(ctx, next) {
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+    let user = await User.findById(ctx.params.id)
+    let broker = await Broker.findOne({_owner: ctx.params.id}, "name idcard credential license verified").lean()
+    ctx.abortWithError(user, new APIError({ error_code: 21400, message: `用户未找到或不存在` }))
+    ctx.body = {...user.toInfoJSON(), broker }
+  },
+
+  async update(ctx, next) {
+    let { nickName, gender, country, city, province, language, avatarUrl } = ctx.request.body
+    await User.updateInfo(ctx.params.id, { nickName, gender, country, city, province, language, avatarUrl })
+    ctx.body = { uid: ctx.params.id, nickName, gender, country, city, province, language, avatarUrl }
+  },
+
+  // async insertU() {
+  //   console.log('userlist:  --------:::', userlist.length)
+  //   let dataUser = []
+  //   for(let i = 0; i < userlist.length; i++) {
+  //     const item = userlist[i]
+  //     let user = await User.create({nickName: item.nickName, avatarUrl: item.avatarUrl, city: 'insurv0723'});
+      

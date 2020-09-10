@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const moment = require('moment')
+const mongoose = require('mongoose')
+const NumberInt32 = require('mongoose-int32')
+const User = require('../../models/user')
+const Broker = require('../../models/broker')
+const BrokerEvaluation = require("../../models/broker_evaluation")
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+const Answer = require("../../models/answer")
+const Question = require("../../models/question")
+const ProductNew = require("../../models/productnew")
+const AnswerLike = require("../../models/answer-like")
+const Comment = require("../../models/comment")
+const CommentsLike = require("../../models/comment-like")
+const categoryidChinese = require("../../lib/categoryidChinese");
+const ProductCategoryNew = require("../../models/categorynew")
+
+module.exports = {
+
+  async submitAudit(ctx, next) {
+    console.log('broker sub info:', ctx);
+    const {name, idcard, credential, license} = ctx.request.body
+    const broker = await Broker.findOneAndUpdate({_owner: ctx.state.uid}, {
+      $set: {
+        name,
+        idcard,
+        credential,
+        license,
+        verified: 0,
+        createTime: moment().format('x'),
+        updateTime: moment().format('x')
+      }
+    }, {new: 1, upsert: 1})
+    ctx.body = 'ok'
+  },
+
+  async index(ctx, next) {
+    const [total, items] = await Promise.all([
+      Broker.count({}).exec(),
+      Broker.find({}).populate('_owner').limit(ctx.query.size).skip(ctx.query.offset).sort({createTime: 'desc'}).exec()
+    ])
+    ctx.body = {
+      total, items: _.map(items, (item) => {
+        return item.toInfoJSON()
+      }), hasNext: total != items.length && items.length >= ctx.query.size
+    }
+  },
+
+  async show(ctx, next) {

@@ -1,0 +1,50 @@
+import app from '../server/';
+import supertest from 'supertest';
+import { expect, should } from 'chai';
+
+const temp = {};
+const request = supertest.agent(app.listen());
+should();
+
+describe('POST api/authenticate', () => {
+  it('should get all cities', done => {
+    request
+      .post('/api/authenticate')
+      .set('Accept', 'application/json')
+      .send({
+        password: 'password'
+      })
+      .expect(200, (err, res) => {
+        temp.token = res.body.token;
+        done();
+      });
+  });
+});
+
+describe('POST /city', () => {
+  it('should add a city', done => {
+    request
+      .post('/api/cities')
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${temp.token}`)
+      .set('Accept', 'application/json')
+      .send({
+        name: 'Bangkok',
+        totalPopulation: 8249117,
+        country: 'Thailand',
+        zipCode: 1200
+      })
+      .expect(200, (err, res) => {
+        temp.idCity = res.body._id;
+        done();
+      });
+  });
+});
+
+describe('GET /cities', () => {
+  it('should get all cities', done => {
+    request
+      .get('/api/cities')
+      .set('Authorization', `Bearer ${temp.token}`)
+      .set('Accept', 'application/json')
+      .expect(200, (err, res) => {

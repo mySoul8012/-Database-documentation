@@ -1,0 +1,49 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const moment = require('moment')
+const Comment = require('./comment')
+const Logger = require('../lib/logger')
+const config = require('../../conf')
+
+const RightSchema = new mongoose.Schema({ name: String, content: String }, { _id: false })
+
+const ProductSchema = new mongoose.Schema({
+  company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true }, 
+  companyName : String,                               // 保险公司机构名称
+	infoId: String,
+	columnId: String,
+  name: String,                                      // 产品名称
+  category1: String,                                 // 产品一级分类
+  category2: String,                                 // 产品二级分类
+  label: String,                                     // 产品标签
+  pictureUrl: String,                                // 产品图片
+  insuredAge: String,                                // 投保年龄
+  insuredAmount: String,                             // 投保金额
+  insuredPeriod :String,                             // 保障期限
+  paymentPeriod :String,                             // 缴费期限
+  rights: [RightSchema],                             // 保障权益
+  otherRights: [RightSchema],                        // 其他权益
+  nrOfComments: { type: NumberInt32, default: 0 },   // 评论数
+  overallScore: { type: Number, default: 0 },        // 总分
+  vValue: { type: Number, default: 5.0 },
+  vValues: { },
+  deleted: { type: Number, default: 0 },             // 删除状态标示 0 未删除 1 已删除
+  createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+  updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
+
+ProductSchema.methods.simpleInfoJSON = function(){
+  return { 
+    id: this.id,
+    pictureUrl: this.company && this.company.pictureUrl,
+    companyName: this.company && this.company.shortName,
+    name: this.name,
+    category1: this.category1,
+    category2: this.category2,
+    label: this.label,
+    nrOfComments: this.nrOfComments,
+    overallScore: this.overallScore
+  }
+}

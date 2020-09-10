@@ -1,0 +1,49 @@
+const _ = require('lodash')
+const Moment = require('moment')
+
+const Comment = require('../models/comment')
+// const Product = require('../models/product');
+const ProductNew = require('../models/productnew');
+const Commpany = require('../models/company')
+const Answer = require('../models/answer')
+const Question = require('../models/question')
+
+module.exports.updateProductAndCompanyComments = async () => {
+	let productComments = await Comment.aggregate([
+		{'$match' : { hidden: 0, deleted: 0 } },
+		{'$group' : { _id: '$product', nrOfComments: { $sum: 1 } } }		
+	])
+
+	_.forEach(productComments, async v => {
+		// await Product.findOneAndUpdate({_id: v._id}, {$set: {nrOfComments: v.nrOfComments}})
+		await ProductNew.findOneAndUpdate({_id: v._id}, {$set: {nrOfComments: v.nrOfComments}})
+	})
+
+
+	let companyComments = await Comment.aggregate([
+		{'$match' : { hidden: 0, deleted: 0 } },
+		{'$group' : { _id: '$company', nrOfComments: { $sum: 1 } } }		
+	])
+	_.forEach(companyComments, async v => {
+		await Commpany.findOneAndUpdate({_id: v._id}, {$set: {nrOfComments: v.nrOfComments}})
+	})
+
+	let answers = await Answer.aggregate([
+		{'$match' : { hidden: 0, deleted: 0 } },
+		{'$group' : { _id: '$question', nrOfAnswers: { $sum: 1 } } }		
+	])
+	_.forEach(answers, async v => {
+		await Question.findOneAndUpdate({_id: v._id}, {$set: {nrOfAnswers: v.nrOfAnswers}})
+	})
+}
+
+module.exports.updateProductVValue = async () => {
+
+	let productValues = await Comment.aggregate([
+		{'$match' : { hidden: 0, deleted: 0 } },
+		{'$group' : { _id: { product: '$product', commentype: '$commentype' }, oe: { $avg: '$oe' }, author: {$addToSet: '$author'} } },
+		{"$project" : { '_id': 0, 'product': '$_id.product', 'type': '$_id.commentype', 'oe': '$oe', 'nrOfAuthor': { $size: '$author' } } }
+	])
+
+
+	let grouped = _.groupBy(productValues, 'product')

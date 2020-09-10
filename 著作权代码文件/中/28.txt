@@ -1,0 +1,25 @@
+const fs = require('fs')
+const jsonwebtoken = require('jsonwebtoken')
+const path = require('path')
+const { jwt } = require('../../conf')
+
+// http://travistidwell.com/blog/2013/09/06/an-online-rsa-public-and-private-key-generator/
+// use 'utf8' to get string instead of byte array  (1024 bit key)
+
+module.exports = {
+  expiresIn: jwt.expiresIn,
+
+  sign: (payload) => {
+    return jsonwebtoken.sign(payload, jwt.secrets, { expiresIn:  jwt.expiresIn })
+  },
+
+  verify: (token) => {
+    try {
+      return jsonwebtoken.verify(token, jwt.secrets, { expiresIn:  jwt.expiresIn })
+    } catch (err) {
+      console.error('ERR', '40002 authorization decode error, access_token:', token, err)
+      return false
+    }
+  },
+
+  decode: (token) => {

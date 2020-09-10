@@ -1,0 +1,54 @@
+const http = require("http")
+const ExtendableError = require('es6-error')
+
+/**
+ * 自定义Api异常
+ */
+class Exception extends ExtendableError {
+  constructor(status = http.STATUS_CODES[400], error_code, message, errors) {
+    super(message)
+    this.code = error_code
+    this.status = status
+    this.message = message
+    this.errors = errors
+		this.name = this.constructor.name
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
+class AuthenticationError extends Exception {
+  constructor(error_code, message) {
+    super(http.STATUS_CODES[401], error_code, message)
+  }
+}
+
+class BadRequestError extends Exception {
+  constructor(error_code, message) {
+    super(http.STATUS_CODES[400], error_code, message)
+  }
+}
+
+class NotFoundError extends Exception {
+  constructor() {
+    super(http.STATUS_CODES[404], 404, http.STATUS_CODES[404])
+  }
+}
+
+class InternalServerError extends Exception {
+  constructor() {
+    super(http.STATUS_CODES[500], 500, '内部服务错误')
+  }
+}
+
+exports.Unexpected = new BadRequestError(error_code = -1, message = '未知异常')
+exports.LoginCodeParameterMissing = new BadRequestError(error_code = 20101, message = '缺少必要的请求参数[code]!')
+exports.LoginWxRequestError = (errmsg) => new BadRequestError(error_code = 20102, message = `调用微信[jscode2session]接口出错- ${errmsg}`)
+exports.InvalidObjectId = new BadRequestError(error_code = 20103, message = '无效或非法的请求资源ID')
+exports.NotFound = new BadRequestError(error_code = 20104, message = '请求资源不存在或未找到')
+
+exports.UnauthorizedError = new AuthenticationError(24001 ,'缺少必要的请求参数Authorized Token！')
+exports.InvalidAuthorizedTokenError = new AuthenticationError(24001, '无效的请求Authorized Token，请检查Token是否填写正确！')
+exports.AuthorizedTokenExpiredError = new AuthenticationError(24001, 'Authorized Token已过期，请重新登录获取！')
+
+exports.NotFoundError = new NotFoundError()
+exports.InternalServerError = new InternalServerError()

@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Answer = require('../../../models/answer')
+const Question = require('../../../models/question')
+const AnswerLike = require('../../../models/answer-like')
+const APIError = require('../../../errors/APIError')
+const InvalidObjectId = require('../../../errors/InvalidObjectId')
+
+module.exports = {
+
+  async index(ctx, next) {
+    // TODO 显示评论点赞数最多的一条
+    let query = {}, sort = {createTime: -1}
+
+    if( typeof ctx.query.questionId !== 'undefined' ){
+      query = { question: ctx.query.questionId }
+    }
+    const [total, items] = await Promise.all([
+      Answer.count(query).exec(),
+      Answer.find(query).limit(ctx.query.size).populate('author').skip(ctx.query.offset).sort(sort).exec()
+    ])
+    ctx.body = { total, items: _.map(items, item => {return item.basicInfoForAdminView()}),hasNext: total != items.length && items.length >= ctx.query.size }
+  },
+
+  async show(ctx, next) {
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+    let answer = await Answer.findById(ctx.params.id, 'question content nrOfLikes createTime ')
+      .limit(ctx.query.size).skip(ctx.query.offset).sort({nfOfLikes: -1}).exec()
+    ctx.abortWithError(answer, new APIError({ error_code: 21400, message: `回答未找到或不存在` }))
+    ctx.body = answer.infoJSONForMineAnswer()
+  },
+
+  async create(ctx, next) {
+    const { questionId, content, pictures } = ctx.request.body
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(questionId), InvalidObjectId)
+    let question = await Question.findById({_id: questionId})
+    ctx.abortWithError(question, new APIError({ error_code: 21400, message: `问题未找到或不存在` }))
+    const answer = new Answer({ author: ctx.state.uid, question: questionId, content, pictures })
+    await answer.save()
+    await Question.findOneAndUpdate(
+      {_id: questionId}, 
+      {$set: { nrOfAnswers: question.nrOfAnswers || 0 + 1, answer: answer.id }}, 
+      {new: false, upsert: true}
+    )
+    ctx.body = { id: answer.id, content, pictures }
+  },
+
+  async update(ctx, next) {
+    ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+    let { content, pictures } = ctx.request.body

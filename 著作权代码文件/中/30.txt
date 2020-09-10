@@ -1,0 +1,50 @@
+const mongoose = require('mongoose')
+const Evaluation = require('../models/evaluation');
+const CategoryNew1 = require('../models/categorynew1');
+const equal = require('equals')
+const exactens = require('../lib/ExactTens')
+const ChinessToNumber = require('../lib/chineseToNumber');
+const CriticalIllnessInsurancePremium = require("../lib/criticalIllnessInsurancePremium")
+
+// 医疗险保费模型
+module.exports = async function (data, orderOfInsuranceCoverage) {
+  let medicalInsurancePremium = 0;
+  for(let i = 0; i < orderOfInsuranceCoverage.length; i++){
+    if(orderOfInsuranceCoverage[i] == "医疗险"){
+      // 判断年龄
+      if (data.age >= 46 && data.age <= 50) {
+        if (data.sociSec == 0) {
+          medicalInsurancePremium += 950;
+        } else {
+          medicalInsurancePremium += 2760
+        }
+      }
+      if (data.age >= 41 && data.age <= 45) {
+        if (data.sociSec == 0) {
+          medicalInsurancePremium += 610;
+        } else {
+          medicalInsurancePremium += 1900;
+        }
+      }
+      if (data.age >= 36 && data.age <= 40) {
+        if (data.sociSec == 0) {
+          medicalInsurancePremium += 510;
+        } else {
+          medicalInsurancePremium += 1310;
+        }
+      }
+      if (data.age >= 31 && data.age <= 35) {
+        if (data.sociSec == 0) {
+          medicalInsurancePremium += 410;
+        } else {
+          medicalInsurancePremium += 980;
+        }
+      }
+      if (data.age >= 26 && data.age <= 30) {
+        if (data.sociSec == 0) {
+          medicalInsurancePremium += 310;
+        } else {
+          medicalInsurancePremium += 700;
+        }
+      }
+      if (data.age >= 21 && data.age <= 25) {

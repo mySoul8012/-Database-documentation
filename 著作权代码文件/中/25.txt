@@ -1,0 +1,25 @@
+module.exports = (birthday) => {
+    let age;
+    const birthdayArr = birthday.split('-');
+    const birthdayYear = birthdayArr[0];
+    const birthdayMonth = birthdayArr[1];
+    const birthdayDay = birthdayArr[2];
+    const today = new Date();
+    const nowYear = today.getFullYear();
+    const nowMonth = today.getMonth() + 1;
+    const nowDay = today.getDate();
+    if (nowYear === birthdayYear) {
+        age = 0; // 同年 则为0岁
+    } else {
+        const ageDiff = nowYear - birthdayYear; // 年之差
+        if (ageDiff > 0) {
+            if (nowMonth === birthdayMonth) {
+                const dayDiff = nowDay - birthdayDay; // 日之差
+                if (dayDiff < 0) {
+                    age = ageDiff - 1;
+                } else {
+                    age = ageDiff;
+                }
+            } else {
+                const monthDiff = nowMonth - birthdayMonth; // 月之差
+                if (monthDiff < 0) {

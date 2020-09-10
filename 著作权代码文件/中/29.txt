@@ -1,0 +1,25 @@
+
+const exactens = require('../lib/ExactTens')
+
+// 寿险保费计算
+module.exports = async function (data, coverageIntro) {
+  if (!data || !coverageIntro) {
+    return
+  }
+  // 寿险保费
+  let premium = 0;
+  // 寿险保额
+  let coverage = 0;
+  // 获取保额
+  for (let tmp of coverageIntro) {
+    if (tmp.name == "寿险") {
+      coverage = parseInt(tmp.sumAssured.substring(0, tmp.sumAssured.length - 1));
+    }
+  }
+  // 计算寿险保费
+  if (data.gender == 0) {
+    // 男
+    if (data.age == 31) {
+      premium = exactens(coverage * 15.85);
+    }
+    if (data.age == 32) {

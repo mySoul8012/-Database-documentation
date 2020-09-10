@@ -1,0 +1,25 @@
+// 调用函数，输出保障顺序信息
+
+// 意外险保费内容
+
+
+module.exports = async function (data) {
+  let guaranteeOrder = [];
+  let tmpGuaranteeOrder = {}
+  tmpGuaranteeOrder = {
+    // 序号
+    serialNumber: 5,
+    // 险种
+    insurance: "社保",
+    // 保障内容
+    guarContent: "一般指“五险一金”的“五险”：医疗保险、养老保险、工伤保险、生育保险和失业保险",
+    // 优先级
+    priority: 5 // 优先级
+  }
+  guaranteeOrder.push(tmpGuaranteeOrder);
+
+  if (data.age >= 20 && data.age <= 30) {
+    tmpGuaranteeOrder = {
+      // 序号
+      serialNumber: 4,
+      // 险种

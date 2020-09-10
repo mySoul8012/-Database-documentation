@@ -1,0 +1,51 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Answer = require('../../models/answer')
+const Question = require('../../models/question')
+const AnswerLike = require('../../models/answer-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+
+module.exports = { 
+
+  qs: {
+
+    async index(ctx, next) {
+      ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+
+      let sortQuery = ctx.query.tag && parseInt(ctx.query.tag, 10) || 0 === 1
+        ? {_id: -1}
+        : {nrOfAnswers: -1, _id: -1}
+
+      const [total, items] = await Promise.all([
+        Question.count({ product: ctx.params.id }).exec(),
+        Question.find({ product: ctx.params.id })
+          .populate('product', '-_id name')
+          .populate('answer', '-_id content')
+          .limit(ctx.query.size).skip(ctx.query.offset).sort(sortQuery).exec()
+      ])
+      ctx.body = { total, items: _.map(items, item => { return item.basicInfoWithAnswerJSON() }), hasNext: total != items.length && items.length >= ctx.query.size }
+    },
+
+    async nnew(ctx, next) {
+      ctx.body = { id: mongoose.Types.ObjectId() }
+    },
+
+    async create(ctx, next) {
+      ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+      const { content, pictures } = ctx.request.body
+      const question = new Question({ product: ctx.params.id, author: ctx.state.uid, content, pictures })
+      await question.save()
+      ctx.body = { id: question.id, content, pictures }
+    },
+
+    async show(ctx, next) {
+      ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+      let question = await Question.findById(ctx.params.id).populate('author', '-_id nickName avatarUrl')
+      ctx.abortWithError(question, new APIError(21400, '查询的问题记录没找到或不存在'))
+      ctx.body = question.basicInfoWithAuthorJSON()
+    },
+
+    async update(ctx, next) {
+      ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+  

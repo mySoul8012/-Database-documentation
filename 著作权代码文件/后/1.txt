@@ -1,0 +1,51 @@
+﻿const NotFoundError = require('./errors/NotFoundError')
+
+const Task = require('./task/index');
+
+schedule.scheduleJob('*/5 * * * * *',async function(){
+  await Task.updateProductAndCompanyComments();
+  await Task.updateProductAndCompanyValues();
+  // await Task.initCompanyVValue();
+  await Task.updateProductVValue()
+  await Task.updateCompanyVValue()
+});
+
+schedule.scheduleJob('* */30 * * * *', async ()=>{
+  await Task.updateProductVValue()
+  await Task.updateCompanyVValue()
+})
+
+// Create Koa Application
+const app = new Koa2()
+app.context.config = config
+app.context.Logger = logger
+app.context.Moment = Moment
+app.context.abortWithError = (value, msg, opts) => app.context.assert(value, 400, msg, opts)
+app.silent = true
+
+app.use(koaStatic(path.join( __dirname, '../public')))
+
+app.use(ErrorHandler)
+app.use(cors({origin: (ctx) => { return ctx.header.origin }}));
+
+app.use(convert(KoaBetterBody({
+  enableTypes: ['json', 'form', 'text'],
+  extendTypes: {
+    text: ['text/xml', 'application/xml']
+  },
+  maxFileSize: 1*1024*1024,
+  querystring: require('qs')
+})));
+app.use(async (ctx, next) => {
+  ctx.request.body = ctx.request.fields || ctx.request.body;
+  await next();
+});
+app.use(Logger)
+app.use(responseTime())
+app.use(router.routes())
+app.use(router.allowedMethods())
+
+// Start the application
+app.listen(config.port, () => {
+  console.log(`✅  The server is running at http://localhost:${config.port}/`)
+})

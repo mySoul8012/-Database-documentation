@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Company = require('../../../models/company')
+const Product = require('../../../models/product')
+const APIError = require('../../../errors/APIError')
+const InvalidObjectId = require('../../../errors/InvalidObjectId')
+
+module.exports = {
+
+	async index(ctx, next) {
+		let filterQuery = {}, sortQuery = {}
+		if( typeof ctx.query.companyId !== 'undefined' ){
+      filterQuery.company = ctx.query.companyId
+    }
+
+		sortQuery = ctx.query.tag && parseInt(ctx.query.tag, 10) || 0 === 1
+			? {overallScore: -1, _id: -1}
+			: {nrOfComments: -1, _id: -1}
+
+		const [total, items] = await Promise.all([
+			Product.count(filterQuery).exec(),
+			Product.find(filterQuery).sort(sortQuery).populate('company', "-_id fullName").limit(ctx.query.size).skip(ctx.query.offset).exec()
+		])
+
+		let products = _.map(items, item => { return { ...item.simpleInfoJSON() } })
+		ctx.body = { total, items: products, hasNext: total != items.length && items.length >= ctx.query.size }
+	},
+
+	async show(ctx, next) {
+		ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+		let product = await Product.findById(ctx.params.id).then(res => { return res.basicInfoJSON() })
+		ctx.abortWithError(product, new APIError({ error_code: 21400, message: '产品记录未找到或不存在' }))
+		ctx.body = product
+	},
+
+	async save(ctx, next) {
+		const { companyId } = ctx.request.body
+		ctx.abortWithError(companyId, new APIError({ error_code: 21400, message: '公司ID不能为空' }))
+		let company = await Company.findById(companyId)
+		ctx.abortWithError(company, new APIError({ error_code: 21400, message: '产品记录未找到或不存在' }))
+		const product = new Product({...ctx.request.body, company: companyId})
+		await product.save()
+		ctx.body = product
+	},
+
+	async update(ctx, next) {
+		ctx.abortWithError(mongoose.Types.ObjectId.isValid(ctx.params.id), InvalidObjectId)
+		let product = await Product.findById(ctx.params.id).then(res => { return res.basicInfoJSON() })
+		ctx.abortWithError(product, new APIError({ error_code: 21400, message: '产品记录未找到或不存在' }))
+		let result = await Product.findOneAndUpdate({_id: ctx.params.id}, {$set: {...ctx.request.body}}, {new: 1, upsert: 1})

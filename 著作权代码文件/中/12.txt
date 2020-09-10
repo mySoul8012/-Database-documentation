@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const Broker = require('../../models/broker')
+const ProductNew = require('../../models/productnew');
+const Question = require('../../models/question')
+const Answer = require('../../models/answer')
+const Comment = require('../../models/comment')
+const Favorite = require('../../models/favorite')
+const CommentLike = require('../../models/comment-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId');
+const CategoryNew = require("../../models/categorynew")
+
+// const products = require('./psWCoNewCa');
+
+module.exports = {
+
+  async index(ctx, next) {
+    // TODO 显示评论点赞数最多的一条
+    let query = {}, sort = {}
+    if (typeof ctx.query.type !== 'undefined' && ctx.query.type !== '' && ctx.query.type !== '全部' && ctx.query.type !== '专项险种') {
+      query.type = ctx.query.type;
+      if (typeof ctx.query.tagList !== 'undefined' && ctx.query.tagList !== '' && ctx.query.tagList !== '[]' && ctx.query.tagList !== '[全部]') {
+        query.productTypeList = {$in: JSON.parse(ctx.query.tagList)};
+
+      }
+    } else {
+      if (typeof ctx.query.tagList !== 'undefined' && ctx.query.tagList !== '' && ctx.query.tagList !== '[]' && ctx.query.tagList !== '[全部]') {
+        query = {$or: [{type: {$in: JSON.parse(ctx.query.tagList)}}, {productTypeList: {$in: JSON.parse(ctx.query.tagList)}}]};
+      }
+    }
+
+
+    // TODO
+    let sortQuery = ctx.query.tag && parseInt(ctx.query.tag, 10) || 0 === 1
+        ? {overallScore: -1, _id: -1}
+        : {nrOfComments: -1, _id: -1}
+
+    const [total, items] = await Promise.all([
+      ProductNew.count(query).exec(),
+      ProductNew.find(query).populate('company').sort(sortQuery).limit(ctx.query.size).skip(ctx.query.offset).exec()
+    ])
+
+    let products = await Promise.all(_.map(items, async (item, index) => {
+      let ranking = await ProductNew.count({$and: [{"overallScore": {"$gt": 0}}, {"overallScore": {"$gte": item.overallScore}}, {"_id": {"$gte": item.id}}, {"category1": item.category1}]})
+      const [comment] = await Comment.find({product: item.id}, '-_id content').sort({
+        nrOfLikes: -1,
+        _id: -1
+      }).skip(0).limit(1)
+      return {

@@ -1,0 +1,50 @@
+const Router = require('koa-router')
+
+// middlewares
+const AuthRequired = require('../../middlewares/auth-required-middleware')
+const Pagination = require('../../middlewares/pagination')
+const AccountFrozen = require('../../middlewares/account-frozen-middleware')
+const MUID = require('../../middlewares/muid-middleware')
+const ErrorHandler = require('../../middlewares/error-middleware')
+
+// controllers
+// const homeCtrl = require('../../controllers/homepage')
+const loginCtrl = require('../../controllers/login')
+const searchCtrl = require('../../controllers/search')
+const brokerCtrl = require('../../controllers/broker')
+const userCtrl = require('../../controllers/user')
+const companyCtrl = require('../../controllers/company')
+const evaluationCtrl = require('../../controllers/evaluation')
+const productCtrl = require('../../controllers/product')
+const productNewCtrl = require('../../controllers/productnew')
+const answerCtrl = require('../../controllers/answer')
+const questionCtrl = require('../../controllers/question')
+const qaCtrl = require('../../controllers/qa')
+const commentCtrl = require('../../controllers/comment')
+const settingCtrl = require('../../controllers/settings')
+const mingCtrl = require('../../controllers/ming')
+const schedule = require("../../controllers/schedule")
+// router
+const router = new Router()
+// 定时任务接口
+router.get("/schedule", AuthRequired, schedule)
+
+// 小程序首页
+// router.get('/homepage', homeCtrl.index)
+
+router.get('/about', require('../../controllers/about').about)
+router.get('/settings/product_category', settingCtrl.productCategory);
+router.get('/settings/product_category_new', settingCtrl.productCategoryNew);
+// router.get('/settings/product_category_insert', settingCtrl.productCategoryInsert);
+
+router.put('/hot/setting', require('../../controllers/guide').updateHotSetting)
+router.get('/hot/setting', require('../../controllers/guide').getHotSetting)
+router.get('/guides', require('../../controllers/guide').index)
+router.get('/guides/:id', require('../../controllers/guide').show)
+
+// 微信登录接口
+router.post('/login', loginCtrl.login)
+router.post('/decode', AuthRequired, loginCtrl.decode)
+
+// 搜索
+router.get('/search', AuthRequired, MUID, Pagination, searchCtrl.search)

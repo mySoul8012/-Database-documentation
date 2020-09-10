@@ -1,0 +1,50 @@
+
+const exactens = require('../lib/ExactTens')
+const ChinessToNumber = require('../lib/chineseToNumber');
+
+// 重疾险保费计算函数
+module.exports = async function (data, coverageIntro) {
+  if (!data || !coverageIntro) {
+    return
+  }
+  // 保费
+  let premium = 0;
+  // 重疾险保额
+  let coverage = 0;
+
+  // 获取保额
+  for (let i = 0; i < coverageIntro.length; i++) {
+    if (coverageIntro[i].name == "重疾险") {
+      coverage = ChinessToNumber(coverageIntro[i].sumAssured);
+    }
+  }
+
+  // 分开计算
+  // 计算重疾险保费
+  // 计算可支配收入
+  // 在 0-20范围内
+  // 一年期
+  if (data.personalDisposableIncome >= 0 && data.personalDisposableIncome <= 20) {
+    // 一年期重疾险
+    if (data.age >= 21 && data.age <= 25) {
+      if (coverage == 20) {
+        if (data.gender == 0) {
+          premium = 120;
+        } else {
+          premium = 130;
+        }
+      }
+      if (coverage == 30) {
+        if (data.gender == 0) {
+          premium = 180;
+        } else {
+          premium = 200;
+        }
+      }
+    }
+    if (data.age >= 26 && data.age <= 30) {
+      if (coverage == 20) {
+        if (data.gender == 0) {
+          premium = 180;
+        } else {
+          premium = 200;

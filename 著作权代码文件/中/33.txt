@@ -1,0 +1,50 @@
+const _ = require('lodash')
+const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
+const moment = require('moment')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const jwt = require('../lib/jwt')
+
+const AdminUserSchema = new mongoose.Schema({
+	username: String,
+	email: String,
+	salt: String,
+	password: String,
+	createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+	updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
+
+AdminUserSchema.methods.generateJWT = function() {
+	this.token = jwt.sign({ uid: this.id })
+	this.save()
+  return this.token
+}
+
+// AdminUserSchema.methods.validPassword = function(password) {
+//   let hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex')
+//   return this.password === hash
+// }
+
+// AdminUserSchema.methods.setPassword = function(password){
+//   this.salt = crypto.randomBytes(16).toString('hex')
+//   this.password = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex')
+// }
+
+// AdminUserSchema.methods.updatePassword = function(password){
+//   this.password = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex')
+//   return this.save()
+// }
+
+AdminUserSchema.methods.validPassword = function(plainPassword) {
+  return bcrypt.compareSync(plainPassword, this.password)
+}
+
+AdminUserSchema.methods.setPassword = function(password){
+  this.salt = bcrypt.genSaltSync(10)
+  this.password = bcrypt.hashSync(password, this.salt)
+}
+
+AdminUserSchema.methods.updatePassword = function(password){
+  this.password = bcrypt.hashSync(password, this.salt)

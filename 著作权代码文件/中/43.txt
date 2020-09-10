@@ -1,0 +1,50 @@
+const Router = require('koa-router')
+
+// middlewares
+const AuthRequired = require('../../middlewares/auth-required-middleware')
+const Pagination = require('../../middlewares/pagination')
+
+// controllers
+const loginCtrl = require('../../controllers/admin/login')
+const userCtrl = require('../../controllers/admin/user')
+const brokerCtrl = require('../../controllers/admin/broker')
+const companyCtrl = require('../../controllers/admin/company')
+const productCtrl = require('../../controllers/admin/product')
+const answerCtrl = require('../../controllers/admin/answer')
+const questionCtrl = require('../../controllers/admin/question')
+const commentCtrl = require('../../controllers/admin/comment')
+const adminUserCtrl = require('../../controllers/admin/admin-user')
+
+// router
+const router = new Router()
+// 小程序首页
+// router.get('/homepage', homeCtrl.index)
+
+// 微信登录接口
+router.post('/login', loginCtrl.login)
+// 管理台用户
+router.post('/admin/users', adminUserCtrl.create)
+router.post('/admin/users/:id/password', adminUserCtrl.updatePassword)
+router.post('/admin/users/:id/password-reset', adminUserCtrl.resetPassword)
+
+// 用户接口
+router.get('/users', AuthRequired, Pagination, userCtrl.index)
+router.get('/users/:id', AuthRequired, userCtrl.show)
+router.put('/users/:id', AuthRequired, userCtrl.update)
+router.post('/users/:id/frozen', AuthRequired, userCtrl.frozen)
+
+router.get('/brokers', AuthRequired, Pagination, brokerCtrl.index)
+router.get('/brokers/:id', AuthRequired, brokerCtrl.show)
+router.put('/brokers/:id', AuthRequired, brokerCtrl.update)
+router.post('/brokers/:id/pass-audit', AuthRequired, brokerCtrl.passAudit)
+router.post('/brokers/:id/reject-audit', AuthRequired, brokerCtrl.rejectAudit)
+
+// 保险公司接口
+router.get('/companies', AuthRequired, Pagination, companyCtrl.index)
+router.get('/companies/:id', AuthRequired, companyCtrl.show)
+router.put('/companies/:id', AuthRequired, companyCtrl.update)
+router.del('/companies/:id', AuthRequired, companyCtrl.remove)
+router.post('/companies', AuthRequired, companyCtrl.save)
+
+// 保险产品接口
+router.get('/products', AuthRequired, Pagination, productCtrl.index)

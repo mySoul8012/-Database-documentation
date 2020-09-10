@@ -1,0 +1,49 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const NumberInt32 = require('mongoose-int32')
+const Comment = require('../../models/comment')
+const Company = require('../../models/company')
+const Product = require('../../models/product');
+const ProductNew = require('../../models/productnew')
+const Broker = require('../../models/broker')
+const UserComment = require('../../models/user-comment')
+const BrokerComment = require('../../models/broker-comment')
+const CommentLike = require('../../models/comment-like')
+const APIError = require('../../errors/APIError')
+const InvalidObjectId = require('../../errors/InvalidObjectId')
+const insertList = require('./data/0715');
+const users = require('./data/user0716')
+
+module.exports = {
+
+  async check(ctx, next) {
+    ctx.abortWithError(ctx.query.productId, new APIError({error_code: 21410, message: 'productId 不可为空'}))
+    let product = await ProductNew.findById(ctx.query.productId)
+    ctx.abortWithError(product, new APIError({error_code: 21411, message: '产品记录未找到或不存在'}))
+
+    const [total, totalDaily] = await Promise.all([
+      Comment.count({product: product._id, author: ctx.state.uid, deleted: 0}).exec(),
+      Comment.count({
+        product: product._id,
+        author: ctx.state.uid,
+        deleted: 0,
+        createTime: {$gte: ctx.Moment().startOf('day').valueOf(), $lte: ctx.Moment().endOf('day').valueOf()}
+      }).exec()
+    ])
+    ctx.abortWithError(total + 1 <= 10, new APIError({
+      error_code: 21412,
+      message: '您已对当前产品点过10次\n平台规定, 您对该产品最多进行10次点评'
+    }))
+    ctx.abortWithError(totalDaily + 1 <= 3, new APIError({
+      error_code: 21412,
+      message: '您今天已对当前产品点过3次\n平台规定, 您对该产品一天最多进行3次点评'
+    }))
+    ctx.body = 'ok'
+  },
+
+  async index(ctx, next) {
+    ctx.abortWithError(ctx.query.productId, new APIError({error_code: 21410, message: 'productId 不可为空'}))
+    const product = await ProductNew.findById(ctx.query.productId)
+    ctx.abortWithError(product, new APIError({error_code: 21411, message: '产品记录未找到或不存在'}))
+
+    let filterQuery = {product: ctx.query.productId, hidden: 0, deleted: 0}, sortQuery = {nrOfLikes: -1, _id: -1} // 默认的搜索条件和排序条件

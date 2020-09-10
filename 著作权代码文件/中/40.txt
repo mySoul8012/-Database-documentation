@@ -1,0 +1,49 @@
+const _ = require('lodash')
+const mongoose = require('mongoose')
+require('mongoose-long')(mongoose)
+const NumberInt32 = require('mongoose-int32')
+const moment = require('moment')
+const Comment = require('./comment')
+const Logger = require('../lib/logger')
+const config = require('../../conf');
+
+const RightDetailSchema = new mongoose.Schema({
+  detail: String,
+  name: String,
+  value: String
+}, { _id: false });
+
+const RightDetailListSchema = new mongoose.Schema({
+  name: String,
+  withinRangeDetailList: [RightDetailSchema]
+}, { _id: false });
+
+const RightObjSchema = new mongoose.Schema({
+  withinRangeItemList: [RightDetailListSchema]
+}, { _id: false });
+
+
+const ProductNewSchema = new mongoose.Schema({
+  company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true }, 
+  companyName : String,                               // 保险公司机构名称
+	age: String,  // 年龄
+  healthNotice: String,   // 健康告知
+  insuranceRequirements: String,  // 
+  observationPeriod: String,
+  outOfRange: String,
+  paymentDeadline: String,
+  premium: String,
+  productName: String,  // 产品名称
+  productTypeList: [String],  // 产品标签
+  selling: String,  // 销售状态 在售，停售
+  termInsurance: String,  // 保障期限
+  withinRangeObj: RightObjSchema,  // 保障范围
+  type: String,   // 类型
+  nrOfComments: { type: NumberInt32, default: 0 },   // 评论数
+  overallScore: { type: Number, default: 0 },        // 总分
+  vValue: { type: Number, default: 5.0 },
+  vValues: { },
+  deleted: { type: Number, default: 0 },             // 删除状态标示 0 未删除 1 已删除
+  createTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') },
+  updateTime: { type: mongoose.Schema.Types.Long, get: (v) => { return v.toNumber() }, default:() => moment().format('x') }
+}, { versionKey: false })
