@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>欢迎页</title>
+  <style>
+    :root {
+      --bg1: #0f172a;
+      --bg2: #1d4ed8;
+      --card: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --accent: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 20% 20%, #2563eb, transparent 35%),
+                  radial-gradient(circle at 80% 10%, #9333ea, transparent 30%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(720px, 100%);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.28);
+      padding: 28px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 5vw, 44px);
+      line-height: 1.2;
+    }
+    p {
+      margin: 0;
+      opacity: 0.92;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .toolbar {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .primary {
+      background: var(--accent);
+      color: #111827;
+    }
+    .secondary {
+      background: rgba(255,255,255,0.2);
+      color: #f8fafc;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .tip {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #bfdbfe;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>你好，欢迎来到你的小网页 👋</h1>
+    <p id="desc">这是一个简洁的单页模板，带有渐变背景、玻璃卡片效果和基础交互。你可以直接在这个文件上继续扩展。</p>
+    <div class="toolbar">
+      <button class="primary" id="timeBtn">显示当前时间</button>
+      <button class="secondary" id="themeBtn">切换暖色背景</button>
+    </div>
+    <div class="tip" id="tip">点一下按钮试试吧～</div>
+  </main>
+
+  <script>
+    const tip = document.getElementById('tip');
+    const timeBtn = document.getElementById('timeBtn');
+    const themeBtn = document.getElementById('themeBtn');
+    let warm = false;
+
+    timeBtn.addEventListener('click', () => {
+      const now = new Date().toLocaleString('zh-CN', { hour12: false });
+      tip.textContent = `当前时间：${now}`;
+    });
+
+    themeBtn.addEventListener('click', () => {
+      warm = !warm;
+      document.documentElement.style.setProperty('--bg1', warm ? '#7c2d12' : '#0f172a');
+      document.documentElement.style.setProperty('--bg2', warm ? '#ea580c' : '#1d4ed8');
+      document.documentElement.style.setProperty('--accent', warm ? '#22d3ee' : '#f59e0b');
+      tip.textContent = warm ? '已切换为暖色背景。' : '已恢复默认背景。';
+    });
+  </script>
+</body>
+</html>
